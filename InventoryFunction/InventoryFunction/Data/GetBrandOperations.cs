@@ -62,7 +62,7 @@ namespace InventoryFunction.Data
 					{
 						id = id
 					},
-					commandType: CommandType.StoredProcedure).FirstOrDefault();
+					commandType: CommandType.StoredProcedure).FirstOrDefault(); //TODO: finish converting to this format
 				}
 
                 _logger.LogInformation("GetBrand success response.");

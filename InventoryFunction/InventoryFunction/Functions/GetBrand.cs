@@ -32,14 +32,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetBrand")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrand/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetBrand request received.");
 
             try
             {
                 // Validate
-                int id = Convert.ToInt32(req.Query["id"]);
+                int id = Convert.ToInt32(req.Query["id"]); // TODO: finish converting inputs where needed
 
                 var failures = _lightValidator.ValidateBrandId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -53,6 +53,7 @@ namespace InventoryFunction.Functions
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
                 response.WriteString(JsonConvert.SerializeObject(brand));
+                // TODO: finish changes responses to serialize object
                 return response;
             }
             catch (ArgumentException ae)
