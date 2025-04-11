@@ -1,0 +1,1 @@
+For this project, I wanted to expand on my Inventory Management idea and try to setup an Azure Function to handle the http requests. I can use this data to expand and work on a frontend project later.
