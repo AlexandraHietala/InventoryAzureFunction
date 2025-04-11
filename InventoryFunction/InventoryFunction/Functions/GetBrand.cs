@@ -88,9 +88,10 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 string search = req.Query["search"];
+                // TODO: Validate search string
 
                 // Process
-                List<Brand> brands = await _workflow.GetBrands(); // TODO: Add search string
+                List<Brand> brands = await _workflow.GetBrands(search);
 
                 // Respond
                 _logger.LogInformation("GetBrands success response.");

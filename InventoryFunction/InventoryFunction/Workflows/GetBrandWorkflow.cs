@@ -15,7 +15,7 @@ namespace InventoryFunction.Workflows
     public interface IGetBrandWorkflow
     {
         Task<Brand> GetBrand(int id);
-        Task<List<Brand>> GetBrands();
+        Task<List<Brand>> GetBrands(string search);
     }
 
     public class GetBrandWorkflow : IGetBrandWorkflow
@@ -65,7 +65,7 @@ namespace InventoryFunction.Workflows
             }
         }
 
-        public async Task<List<Brand>> GetBrands()
+        public async Task<List<Brand>> GetBrands(string search)
         {
             _logger.LogDebug("GetBrands request received.");
 
@@ -75,7 +75,7 @@ namespace InventoryFunction.Workflows
                 // Nothing to validate
 
                 // Process
-                List<BrandDto> brandDtos = await _getBrandOperations.GetBrands(null);
+                List<BrandDto> brandDtos = await _getBrandOperations.GetBrands(search);
                 List<Brand> brands = BrandConverter.ConvertListBrandDtoToListBrand(brandDtos);
 
                 // Respond

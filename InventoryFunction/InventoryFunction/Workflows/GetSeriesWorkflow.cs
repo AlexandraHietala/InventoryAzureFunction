@@ -15,7 +15,7 @@ namespace InventoryFunction.Workflows
     public interface IGetSeriesWorkflow
     {
         Task<Series> GetASeries(int id);
-        Task<List<Series>> GetSeries();
+        Task<List<Series>> GetSeries(string search);
     }
 
     public class GetSeriesWorkflow : IGetSeriesWorkflow
@@ -65,7 +65,7 @@ namespace InventoryFunction.Workflows
             }
         }
 
-        public async Task<List<Series>> GetSeries()
+        public async Task<List<Series>> GetSeries(string search)
         {
             _logger.LogDebug("GetSeries request received.");
 
@@ -75,7 +75,7 @@ namespace InventoryFunction.Workflows
                 // Nothing to validate
 
                 // Process
-                List<SeriesDto> seriesDtos = await _getSeriesOperations.GetSeries(null);
+                List<SeriesDto> seriesDtos = await _getSeriesOperations.GetSeries(search);
                 List<Series> series = SeriesConverter.ConvertListSeriesDtoToListSeries(seriesDtos);
 
                 // Respond

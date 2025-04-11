@@ -85,9 +85,10 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 string search = req.Query["search"];
+                // TODO: Validate search string
 
                 // Process
-                List<Collection> collections = await _workflow.GetCollections(); // TODO: Add search string
+                List<Collection> collections = await _workflow.GetCollections(search);
 
                 // Respond
                 _logger.LogInformation("GetCollections success response.");

@@ -15,7 +15,7 @@ namespace InventoryFunction.Workflows
     public interface IGetCollectionWorkflow
     {
         Task<Collection> GetCollection(int id);
-        Task<List<Collection>> GetCollections();
+        Task<List<Collection>> GetCollections(string search);
     }
 
     public class GetCollectionWorkflow : IGetCollectionWorkflow
@@ -65,7 +65,7 @@ namespace InventoryFunction.Workflows
             }
         }
 
-        public async Task<List<Collection>> GetCollections()
+        public async Task<List<Collection>> GetCollections(string search)
         {
             _logger.LogDebug("GetCollections request received.");
 
@@ -75,7 +75,7 @@ namespace InventoryFunction.Workflows
                 // Nothing to validate
 
                 // Process
-                List<CollectionDto> collectionDtos = await _getCollectionOperations.GetCollections(null);
+                List<CollectionDto> collectionDtos = await _getCollectionOperations.GetCollections(search);
                 List<Collection> collections = CollectionConverter.ConvertListCollectionDtoToListCollection(collectionDtos);
 
                 // Respond
