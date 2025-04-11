@@ -32,7 +32,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItemComment")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemComment/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItemComment request received.");
             
@@ -80,7 +80,7 @@ namespace InventoryFunction.Functions
 
 
         [Function("GetItemCommentsByItem")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemCommentsByItem/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItemCommentsByItem request received.");
       

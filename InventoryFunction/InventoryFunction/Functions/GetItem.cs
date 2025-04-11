@@ -30,7 +30,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItem")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItem/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItem request received.");
 
@@ -77,7 +77,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItems")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{search}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItems/{search?}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItems request received.");
 
@@ -121,7 +121,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItemsPerCollection")]
-        public async Task<HttpResponseData> Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemsPerCollection/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItemsPerCollection request received.");
  

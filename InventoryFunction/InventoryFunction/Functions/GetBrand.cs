@@ -33,7 +33,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetBrand")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "brand/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrand/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetBrand request received.");
 
@@ -80,7 +80,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetBrands")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "brands/{search}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrands/{search?}")] HttpRequestData req)
         {
             _logger.LogDebug("GetBrands request received.");
  

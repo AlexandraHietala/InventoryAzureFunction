@@ -30,7 +30,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetRole")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetRole/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetRole request received.");
 

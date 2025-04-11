@@ -30,7 +30,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetASeries")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "aseries/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetASeries/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetASeries request received.");
 
@@ -77,7 +77,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetSeries")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "series/{search}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetSeries/{search?}")] HttpRequestData req)
         {
             _logger.LogDebug("GetSeries request received.");
 
