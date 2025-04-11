@@ -6,14 +6,14 @@ using System.Drawing;
 
 namespace InventoryFunction.Validators.LightValidators
 {
-    public interface IBrandControllerValidator
+    public interface IBrandLightValidator
     {
         string ValidateBrandId(int id);
         string ValidateAddBrand(Brand brand);
         string ValidateUpdateBrand(Brand brand);
     }
 
-    public class BrandControllerValidator : IBrandControllerValidator
+    public class BrandLightValidator : IBrandLightValidator
     {
         public string ValidateAddBrand(Brand brand)
         {

@@ -2,7 +2,7 @@ using InventoryFunction.Models.Classes;
 using InventoryFunction.Models.System;
 using System.Collections.Generic;
 
-namespace UserApi.Validators.V1
+namespace InventoryFunction.Validators.LightValidators
 {
     public interface IUserLightValidator
     {

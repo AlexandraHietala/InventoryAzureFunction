@@ -1,6 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,63 +13,54 @@ using InventoryFunction.Workflows;
 
 namespace InventoryFunction.Functions
 {
-    public class AddItem
+    public class UpdateItemComment
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly IAddItemWorkflow _workflow;
-        private readonly IItemLightValidator _lightValidator;
+        private readonly IUpdateItemCommentWorkflow _workflow;
+        private readonly IItemCommentLightValidator _lightValidator;
 
-        public AddItem(ILoggerFactory loggerFactory, IConfiguration configuration)
+        public UpdateItemComment(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
-            _logger = loggerFactory.CreateLogger<AddItem>();
+            _logger = loggerFactory.CreateLogger<UpdateItemComment>();
             _configuration = configuration;
-            _workflow = new AddItemWorkflow(loggerFactory, configuration);
-            _lightValidator = new ItemLightValidator();
+            _workflow = new UpdateItemCommentWorkflow(loggerFactory, configuration);
+            _lightValidator = new ItemCommentLightValidator();
         }
 
-        [Function("AddItem")] 
+        [Function("UpdateItemComment")]
         public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
-            _logger.LogDebug("AddItem request received.");
+            _logger.LogDebug("UpdateItemComment request received.");
 
             try
             {
                 // Validate
-                var item = JsonConvert.DeserializeObject<Item>(await new StreamReader(req.Body).ReadToEndAsync());
+                var comment = JsonConvert.DeserializeObject<ItemComment>(await new StreamReader(req.Body).ReadToEndAsync());
 
-                //Item item = new Item()
+                //ItemComment item = new ItemComment()
                 //{
-                //    Id = 0,
-                //    CollectionId = collectionId,
-                //    Status = status,
-                //    Type = type,
-                //    BrandId = brandId,
-                //    SeriesId = seriesId,
-                //    Name = name,
-                //    Description = description,
-                //    Format = format,
-                //    Size = size,
-                //    Year = year,
-                //    Photo = photo,
+                //    Id = id,
+                //    ItemId = itemId,
+                //    Comment = comment,
                 //    CreatedBy = lastmodifiedby,
                 //    CreatedDate = DateTime.Now,
                 //    LastModifiedBy = lastmodifiedby,
                 //    LastModifiedDate = DateTime.Now
                 //};
 
-                var failures = _lightValidator.ValidateAddItem(item);
+                var failures = _lightValidator.ValidateUpdateItemComment(comment);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
                 // Process
-                int id = await _workflow.AddItem(item);
+                await _workflow.UpdateItemComment(comment);
+
 
                 // Respond
-                _logger.LogInformation("AddItem success response.");
+                _logger.LogInformation("UpdateItemComment success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(id.ToString());
                 return response;
             }
             catch (ArgumentException ae)

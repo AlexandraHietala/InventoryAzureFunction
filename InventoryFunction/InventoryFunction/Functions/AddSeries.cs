@@ -1,6 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,59 +13,50 @@ using InventoryFunction.Workflows;
 
 namespace InventoryFunction.Functions
 {
-    public class AddItem
+    public class AddSeries
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly IAddItemWorkflow _workflow;
-        private readonly IItemLightValidator _lightValidator;
+        private readonly IAddSeriesWorkflow _workflow;
+        private readonly ISeriesLightValidator _lightValidator;
 
-        public AddItem(ILoggerFactory loggerFactory, IConfiguration configuration)
+        public AddSeries(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
-            _logger = loggerFactory.CreateLogger<AddItem>();
+            _logger = loggerFactory.CreateLogger<AddSeries>();
             _configuration = configuration;
-            _workflow = new AddItemWorkflow(loggerFactory, configuration);
-            _lightValidator = new ItemLightValidator();
+            _workflow = new AddSeriesWorkflow(loggerFactory, configuration);
+            _lightValidator = new SeriesLightValidator();
         }
 
-        [Function("AddItem")] 
+        [Function("AddSeries")]
         public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
-            _logger.LogDebug("AddItem request received.");
+            _logger.LogDebug("AddSeries request received.");
 
             try
             {
                 // Validate
-                var item = JsonConvert.DeserializeObject<Item>(await new StreamReader(req.Body).ReadToEndAsync());
+                var series = JsonConvert.DeserializeObject<Series>(await new StreamReader(req.Body).ReadToEndAsync());
 
-                //Item item = new Item()
+                //Series series = new Series()
                 //{
                 //    Id = 0,
-                //    CollectionId = collectionId,
-                //    Status = status,
-                //    Type = type,
-                //    BrandId = brandId,
-                //    SeriesId = seriesId,
-                //    Name = name,
+                //    SeriesName = seriesName,
                 //    Description = description,
-                //    Format = format,
-                //    Size = size,
-                //    Year = year,
-                //    Photo = photo,
                 //    CreatedBy = lastmodifiedby,
                 //    CreatedDate = DateTime.Now,
                 //    LastModifiedBy = lastmodifiedby,
                 //    LastModifiedDate = DateTime.Now
                 //};
 
-                var failures = _lightValidator.ValidateAddItem(item);
+                var failures = _lightValidator.ValidateAddSeries(series);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
                 // Process
-                int id = await _workflow.AddItem(item);
+                int id = await _workflow.AddSeries(series);
 
                 // Respond
-                _logger.LogInformation("AddItem success response.");
+                _logger.LogInformation("AddSeries success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");

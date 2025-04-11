@@ -29,15 +29,15 @@ namespace InventoryFunction.Functions
         }
 
         [Function("AddItemComment")]
-        public async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
             _logger.LogDebug("AddItemComment request received.");
-
-            var comment = JsonConvert.DeserializeObject<ItemComment>(await new StreamReader(req.Body).ReadToEndAsync());
-
+       
             try
             {
                 // Validate
+                var comment = JsonConvert.DeserializeObject<ItemComment>(await new StreamReader(req.Body).ReadToEndAsync());
+
                 //ItemComment item = new ItemComment()
                 //{
                 //    Id = 0,
@@ -67,21 +67,21 @@ namespace InventoryFunction.Functions
             {
                 var response = req.CreateResponse(HttpStatusCode.BadRequest);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString($"{ae.Message}.");
+                response.WriteString($"{ae.Message}");
                 return response;
             }
             catch (InvalidOperationException ioe)
             {
                 var response = req.CreateResponse(HttpStatusCode.BadRequest);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString($"[200100002] AddItemComment InvalidOperationException: {ioe.Message}.");
+                response.WriteString($"{ioe.Message}");
                 return response;
             }
             catch (Exception e)
             {
                 var response = req.CreateResponse(HttpStatusCode.InternalServerError);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString($"[200100003] AddItemComment Exception: {e.Message}.");
+                response.WriteString($"{e.Message}");
                 return response;
             }
         }

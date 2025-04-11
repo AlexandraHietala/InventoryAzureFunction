@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,48 +10,48 @@ using Newtonsoft.Json;
 using InventoryFunction.Models.Classes;
 using InventoryFunction.Validators.LightValidators;
 using InventoryFunction.Workflows;
+using System.Collections.Generic;
 
 namespace InventoryFunction.Functions
 {
-    public class GetItemComment
+    public class GetRole
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly IGetItemCommentWorkflow _workflow;
-        private readonly IItemCommentLightValidator _commentLightValidator;
-        private readonly IItemLightValidator _itemLightValidator;
+        private readonly IGetRoleWorkflow _workflow;
+        private readonly IUserLightValidator _lightValidator;
 
-        public GetItemComment(ILoggerFactory loggerFactory, IConfiguration configuration)
+        public GetRole(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
-            _logger = loggerFactory.CreateLogger<GetItemComment>();
+            _logger = loggerFactory.CreateLogger<GetRole>();
             _configuration = configuration;
-            _workflow = new GetItemCommentWorkflow(loggerFactory, configuration);
-            _commentLightValidator = new ItemCommentLightValidator();
-            _itemLightValidator = new ItemLightValidator();
+            _workflow = new GetRoleWorkflow(loggerFactory, configuration);
+            _lightValidator = new UserLightValidator();
         }
 
-        [Function("GetItemComment")]
+        [Function("GetRole")]
         public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
-            _logger.LogDebug("GetItemComment request received.");
-            
+            _logger.LogDebug("GetRole request received.");
+
             try
             {
                 // Validate
-                var commentId = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                var id = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
 
-                var failures = _commentLightValidator.ValidateItemCommentId(commentId);
+                var failures = _lightValidator.ValidateRoleId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
                 // Process
-                ItemComment comment = await _workflow.GetItemComment(commentId);
+                Role role = await _workflow.GetRole(id);
+
 
                 // Respond
-                _logger.LogInformation("GetItemComment success response.");
+                _logger.LogInformation("GetRole success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(comment.ToString());
+                response.WriteString(role.ToString());
                 return response;
             }
             catch (ArgumentException ae)
@@ -78,29 +77,26 @@ namespace InventoryFunction.Functions
             }
         }
 
-
-        [Function("GetItemCommentsByItem")]
+        [Function("GetRoles")]
         public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
-            _logger.LogDebug("GetItemCommentsByItem request received.");
-      
+            _logger.LogDebug("GetRoles request received.");
+
             try
             {
                 // Validate
-                var itemId = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                var failures = _itemLightValidator.ValidateItemId(itemId);
-                if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
+                // Nothing to Validate
 
                 // Process
-                List<ItemComment> comments = await _workflow.GetItemComments(itemId);
+                List<Role> roles = await _workflow.GetRoles();
+
 
                 // Respond
-                _logger.LogInformation("GetItemCommentsByItem success response.");
+                _logger.LogInformation("GetRoles success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(comments.ToString());
+                response.WriteString(roles.ToString());
                 return response;
             }
             catch (ArgumentException ae)

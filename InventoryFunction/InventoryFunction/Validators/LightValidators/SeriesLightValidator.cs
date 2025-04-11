@@ -6,14 +6,14 @@ using System.Drawing;
 
 namespace InventoryFunction.Validators.LightValidators
 { 
-    public interface ISeriesControllerValidator
+    public interface ISeriesLightValidator
     {
         string ValidateSeriesId(int id);
         string ValidateAddSeries(Series series);
         string ValidateUpdateSeries(Series series);
     }
 
-    public class SeriesControllerValidator : ISeriesControllerValidator
+    public class SeriesLightValidator : ISeriesLightValidator
     {
         public string ValidateAddSeries(Series series)
         {

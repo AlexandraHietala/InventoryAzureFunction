@@ -1,6 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,66 +10,46 @@ using Newtonsoft.Json;
 using InventoryFunction.Models.Classes;
 using InventoryFunction.Validators.LightValidators;
 using InventoryFunction.Workflows;
+using InventoryFunction.Models.System;
 
 namespace InventoryFunction.Functions
 {
-    public class AddItem
+    public class RemoveSeries
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly IAddItemWorkflow _workflow;
-        private readonly IItemLightValidator _lightValidator;
+        private readonly IRemoveSeriesWorkflow _workflow;
+        private readonly ISeriesLightValidator _lightValidator;
 
-        public AddItem(ILoggerFactory loggerFactory, IConfiguration configuration)
+        public RemoveSeries(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
-            _logger = loggerFactory.CreateLogger<AddItem>();
+            _logger = loggerFactory.CreateLogger<RemoveSeries>();
             _configuration = configuration;
-            _workflow = new AddItemWorkflow(loggerFactory, configuration);
-            _lightValidator = new ItemLightValidator();
+            _workflow = new RemoveSeriesWorkflow(loggerFactory, configuration);
+            _lightValidator = new SeriesLightValidator();
         }
 
-        [Function("AddItem")] 
+        [Function("RemoveSeries")]
         public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
-            _logger.LogDebug("AddItem request received.");
+            _logger.LogDebug("RemoveSeries request received.");
 
             try
             {
                 // Validate
-                var item = JsonConvert.DeserializeObject<Item>(await new StreamReader(req.Body).ReadToEndAsync());
+                var idUser = JsonConvert.DeserializeObject<GenericIdUser>(await new StreamReader(req.Body).ReadToEndAsync());
 
-                //Item item = new Item()
-                //{
-                //    Id = 0,
-                //    CollectionId = collectionId,
-                //    Status = status,
-                //    Type = type,
-                //    BrandId = brandId,
-                //    SeriesId = seriesId,
-                //    Name = name,
-                //    Description = description,
-                //    Format = format,
-                //    Size = size,
-                //    Year = year,
-                //    Photo = photo,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now
-                //};
-
-                var failures = _lightValidator.ValidateAddItem(item);
+                var failures = _lightValidator.ValidateSeriesId(idUser.Id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
                 // Process
-                int id = await _workflow.AddItem(item);
+                await _workflow.RemoveSeries(idUser.Id, idUser.LastModifiedBy);
 
                 // Respond
-                _logger.LogInformation("AddItem success response.");
+                _logger.LogInformation("RemoveSeries success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(id.ToString());
                 return response;
             }
             catch (ArgumentException ae)

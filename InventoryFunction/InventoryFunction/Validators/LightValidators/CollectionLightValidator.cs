@@ -6,14 +6,14 @@ using System.Drawing;
 
 namespace InventoryFunction.Validators.LightValidators
 {
-    public interface ICollectionControllerValidator
+    public interface ICollectionLightValidator
     {
         string ValidateCollectionId(int id);
         string ValidateAddCollection(Collection item);
         string ValidateUpdateCollection(Collection item);
     }
 
-    public class CollectionControllerValidator : ICollectionControllerValidator
+    public class CollectionLightValidator : ICollectionLightValidator
     {
         public string ValidateAddCollection(Collection collection)
         {

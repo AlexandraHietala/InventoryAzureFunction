@@ -1,6 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -12,28 +10,30 @@ using Newtonsoft.Json;
 using InventoryFunction.Models.Classes;
 using InventoryFunction.Validators.LightValidators;
 using InventoryFunction.Workflows;
+using System.Collections.ObjectModel;
+using System.Drawing;
 
 namespace InventoryFunction.Functions
 {
-    public class AddItem
+    public class UpdateItem
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly IAddItemWorkflow _workflow;
+        private readonly IUpdateItemWorkflow _workflow;
         private readonly IItemLightValidator _lightValidator;
 
-        public AddItem(ILoggerFactory loggerFactory, IConfiguration configuration)
+        public UpdateItem(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
-            _logger = loggerFactory.CreateLogger<AddItem>();
+            _logger = loggerFactory.CreateLogger<UpdateItem>();
             _configuration = configuration;
-            _workflow = new AddItemWorkflow(loggerFactory, configuration);
+            _workflow = new UpdateItemWorkflow(loggerFactory, configuration);
             _lightValidator = new ItemLightValidator();
         }
 
-        [Function("AddItem")] 
+        [Function("UpdateItem")]
         public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
         {
-            _logger.LogDebug("AddItem request received.");
+            _logger.LogDebug("UpdateItem request received.");
 
             try
             {
@@ -42,7 +42,7 @@ namespace InventoryFunction.Functions
 
                 //Item item = new Item()
                 //{
-                //    Id = 0,
+                //    Id = id,
                 //    CollectionId = collectionId,
                 //    Status = status,
                 //    Type = type,
@@ -60,18 +60,17 @@ namespace InventoryFunction.Functions
                 //    LastModifiedDate = DateTime.Now
                 //};
 
-                var failures = _lightValidator.ValidateAddItem(item);
+                var failures = _lightValidator.ValidateUpdateItem(item);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
                 // Process
-                int id = await _workflow.AddItem(item);
+                await _workflow.UpdateItem(item);
 
                 // Respond
-                _logger.LogInformation("AddItem success response.");
+                _logger.LogInformation("UpdateItem success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(id.ToString());
                 return response;
             }
             catch (ArgumentException ae)
