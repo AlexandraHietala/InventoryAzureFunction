@@ -30,14 +30,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetUser")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetUser request received.");
 
             try
             {
                 // Validate
-                var id = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int id = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateUserId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -50,7 +50,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(user.ToString());
+                response.WriteString(JsonConvert.SerializeObject(user));
                 return response;
             }
             catch (ArgumentException ae)
@@ -77,7 +77,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetUsers")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
             _logger.LogDebug("GetUsers request received.");
 
@@ -94,7 +94,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(users.ToString());
+                response.WriteString(JsonConvert.SerializeObject(users));
                 return response;
             }
             catch (ArgumentException ae)

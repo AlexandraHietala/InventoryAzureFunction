@@ -32,14 +32,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItemComment")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItemComment request received.");
             
             try
             {
                 // Validate
-                var commentId = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int commentId = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _commentLightValidator.ValidateItemCommentId(commentId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -52,7 +52,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(comment.ToString());
+                response.WriteString(JsonConvert.SerializeObject(comment));
                 return response;
             }
             catch (ArgumentException ae)
@@ -80,14 +80,14 @@ namespace InventoryFunction.Functions
 
 
         [Function("GetItemCommentsByItem")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItemCommentsByItem request received.");
       
             try
             {
                 // Validate
-                var itemId = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int itemId = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _itemLightValidator.ValidateItemId(itemId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -100,7 +100,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(comments.ToString());
+                response.WriteString(JsonConvert.SerializeObject(comments));
                 return response;
             }
             catch (ArgumentException ae)

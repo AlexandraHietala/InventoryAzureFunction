@@ -30,7 +30,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("RemoveUser")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "delete")] HttpRequestData req)
         {
             _logger.LogDebug("RemoveUser request received.");
 

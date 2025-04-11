@@ -30,14 +30,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetCollection")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetCollection request received.");
 
             try
             {
                 // Validate
-                var id = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int id = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateCollectionId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -50,7 +50,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(collection.ToString());
+                response.WriteString(JsonConvert.SerializeObject(collection));
                 return response;
             }
             catch (ArgumentException ae)
@@ -77,14 +77,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetCollections")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{search}")] HttpRequestData req)
         {
             _logger.LogDebug("GetCollections request received.");
 
             try
             {
                 // Validate
-                var search = JsonConvert.DeserializeObject<string>(await new StreamReader(req.Body).ReadToEndAsync());
+                string search = req.Query["search"];
 
                 // Process
                 List<Collection> collections = await _workflow.GetCollections(); // TODO: Add search string
@@ -94,7 +94,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(collections.ToString());
+                response.WriteString(JsonConvert.SerializeObject(collections));
                 return response;
             }
             catch (ArgumentException ae)

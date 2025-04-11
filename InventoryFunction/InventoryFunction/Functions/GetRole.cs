@@ -30,14 +30,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetRole")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetRole request received.");
 
             try
             {
                 // Validate
-                var id = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int id = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateRoleId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -45,13 +45,12 @@ namespace InventoryFunction.Functions
                 // Process
                 Role role = await _workflow.GetRole(id);
 
-
                 // Respond
                 _logger.LogInformation("GetRole success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(role.ToString());
+                response.WriteString(JsonConvert.SerializeObject(role));
                 return response;
             }
             catch (ArgumentException ae)
@@ -78,7 +77,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetRoles")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
         {
             _logger.LogDebug("GetRoles request received.");
 
@@ -96,7 +95,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(roles.ToString());
+                response.WriteString(JsonConvert.SerializeObject(roles));
                 return response;
             }
             catch (ArgumentException ae)

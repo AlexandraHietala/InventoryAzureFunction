@@ -30,7 +30,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("AddUser")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             _logger.LogDebug("AddUser request received.");
 
@@ -38,18 +38,6 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 var user = JsonConvert.DeserializeObject<User>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                //User user = new User()
-                //{
-                //    Name = name,
-                //    PassSalt = salt,
-                //    PassHash = hash,
-                //    RoleId = roleId,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now
-                //};
 
                 var failures = _lightValidator.ValidateAdd(user);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);

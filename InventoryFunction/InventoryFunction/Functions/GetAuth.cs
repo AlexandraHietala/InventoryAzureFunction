@@ -29,14 +29,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetAuth")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetAuth request received.");
 
             try
             {
                 // Validate
-                var id = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int id = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateUserId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -49,7 +49,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(auth.ToString());
+                response.WriteString(JsonConvert.SerializeObject(auth));
                 return response;
             }
             catch (ArgumentException ae)

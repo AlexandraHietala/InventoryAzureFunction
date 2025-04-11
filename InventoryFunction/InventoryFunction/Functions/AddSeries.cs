@@ -29,7 +29,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("AddSeries")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             _logger.LogDebug("AddSeries request received.");
 
@@ -37,17 +37,6 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 var series = JsonConvert.DeserializeObject<Series>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                //Series series = new Series()
-                //{
-                //    Id = 0,
-                //    SeriesName = seriesName,
-                //    Description = description,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now
-                //};
 
                 var failures = _lightValidator.ValidateAddSeries(series);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);

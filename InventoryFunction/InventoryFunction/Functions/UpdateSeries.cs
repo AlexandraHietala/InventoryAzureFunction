@@ -29,25 +29,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("UpdateSeries")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             _logger.LogDebug("UpdateSeries request received.");
 
             try
             {
                 var series = JsonConvert.DeserializeObject<Series>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                // Validate
-                //Series item = new Series()
-                //{
-                //    Id = id,
-                //    SeriesName = seriesName,
-                //    Description = description,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now
-                //};
 
                 var failures = _lightValidator.ValidateUpdateSeries(series);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);

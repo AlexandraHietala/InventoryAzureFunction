@@ -31,7 +31,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("UpdateItem")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             _logger.LogDebug("UpdateItem request received.");
 
@@ -39,26 +39,6 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 var item = JsonConvert.DeserializeObject<Item>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                //Item item = new Item()
-                //{
-                //    Id = id,
-                //    CollectionId = collectionId,
-                //    Status = status,
-                //    Type = type,
-                //    BrandId = brandId,
-                //    SeriesId = seriesId,
-                //    Name = name,
-                //    Description = description,
-                //    Format = format,
-                //    Size = size,
-                //    Year = year,
-                //    Photo = photo,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now
-                //};
 
                 var failures = _lightValidator.ValidateUpdateItem(item);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);

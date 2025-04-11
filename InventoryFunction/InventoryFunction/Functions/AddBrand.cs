@@ -29,7 +29,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("AddBrand")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             _logger.LogDebug("AddBrand request received.");
 
@@ -37,17 +37,6 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 var brand = JsonConvert.DeserializeObject<Brand>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                //Brand brand = new Brand()
-                //{
-                //    Id = 0,
-                //    BrandName = brandName,
-                //    Description = description,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now
-                //};
 
                 var failures = _lightValidator.ValidateAddBrand(brand);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);

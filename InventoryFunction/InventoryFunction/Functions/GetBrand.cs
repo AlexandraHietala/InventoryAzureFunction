@@ -12,6 +12,7 @@ using InventoryFunction.Validators.LightValidators;
 using InventoryFunction.Workflows;
 using System.Collections.Generic;
 using Microsoft.Azure.Functions.Worker.Extensions;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace InventoryFunction.Functions
@@ -39,7 +40,7 @@ namespace InventoryFunction.Functions
             try
             {
                 // Validate
-                int id = Convert.ToInt32(req.Query["id"]); // TODO: finish converting inputs where needed
+                int id = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateBrandId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -53,7 +54,6 @@ namespace InventoryFunction.Functions
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
                 response.WriteString(JsonConvert.SerializeObject(brand));
-                // TODO: finish changes responses to serialize object
                 return response;
             }
             catch (ArgumentException ae)
@@ -80,14 +80,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetBrands")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{search}")] HttpRequestData req)
         {
             _logger.LogDebug("GetBrands request received.");
  
             try
             {
                 // Validate
-                var search = JsonConvert.DeserializeObject<string>(await new StreamReader(req.Body).ReadToEndAsync());
+                string search = req.Query["search"];
 
                 // Process
                 List<Brand> brands = await _workflow.GetBrands(); // TODO: Add search string
@@ -97,7 +97,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(brands.ToString());
+                response.WriteString(JsonConvert.SerializeObject(brands));
                 return response;
             }
             catch (ArgumentException ae)

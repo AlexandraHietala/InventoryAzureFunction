@@ -29,7 +29,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("AddItemComment")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             _logger.LogDebug("AddItemComment request received.");
        
@@ -37,17 +37,6 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 var comment = JsonConvert.DeserializeObject<ItemComment>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                //ItemComment item = new ItemComment()
-                //{
-                //    Id = 0,
-                //    ItemId = itemId,
-                //    Comment = comment,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now
-                //};
 
                 var failures = _lightValidator.ValidateAddItemComment(comment);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);

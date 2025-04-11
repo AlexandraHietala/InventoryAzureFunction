@@ -30,14 +30,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItem")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItem request received.");
 
             try
             {
                 // Validate
-                var itemId = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int itemId = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateItemId(itemId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -50,7 +50,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(item.ToString());
+                response.WriteString(JsonConvert.SerializeObject(item));
                 return response;
             }
             catch (ArgumentException ae)
@@ -77,14 +77,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItems")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{search}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItems request received.");
 
             try
             {
                 // Validate
-                var search = JsonConvert.DeserializeObject<string>(await new StreamReader(req.Body).ReadToEndAsync());
+                string search = req.Query["search"];
 
                 // Process
                 List<Item> items = await _workflow.GetItems(); //TODO: Add search string 
@@ -94,7 +94,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(items.ToString());
+                response.WriteString(JsonConvert.SerializeObject(items));
                 return response;
             }
             catch (ArgumentException ae)
@@ -121,14 +121,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItemsPerCollection")]
-        public async Task<HttpResponseData> Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetItemsPerCollection request received.");
  
             try
             {
                 // Validate
-                var collectionId = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int collectionId = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateCollectionId(collectionId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -141,7 +141,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(items.ToString());
+                response.WriteString(JsonConvert.SerializeObject(items));
                 return response;
             }
             catch (ArgumentException ae)

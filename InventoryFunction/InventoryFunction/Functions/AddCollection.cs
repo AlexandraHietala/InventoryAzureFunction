@@ -30,26 +30,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("AddCollection")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
         {
             _logger.LogDebug("AddCollection request received.");
 
             try
             {
-                //// Validate
+                // Validate
                 var collection = JsonConvert.DeserializeObject<Collection>(await new StreamReader(req.Body).ReadToEndAsync());
-
-                //Collection collection = new Collection()
-                //{
-                //    Id = 0,
-                //    CollectionName = collectionName,
-                //    Description = description,
-                //    CreatedBy = lastmodifiedby,
-                //    CreatedDate = DateTime.Now,
-                //    LastModifiedBy = lastmodifiedby,
-                //    LastModifiedDate = DateTime.Now
-                //};
-
                 var failures = _lightValidator.ValidateAddCollection(collection);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
