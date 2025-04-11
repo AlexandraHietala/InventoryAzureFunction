@@ -48,10 +48,21 @@ namespace InventoryFunction.Data
             try
             {
                 _logger.LogDebug("GetCollection request received.");
-
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //CollectionDto collection = await connection.QueryFirstAsync<CollectionDto>("[dbo].[spGetCollection]", new { id = id }, commandType: CommandType.StoredProcedure);
                 CollectionDto collection = new CollectionDto();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    collection = connection.Query<CollectionDto>("dbo.spGetCollection", new
+                    {
+                        id = id
+                    },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault(); //TODO: finish converting to this format
+                }
 
                 _logger.LogInformation("GetCollection success response.");
                 return collection;
@@ -82,9 +93,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetCollections request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<CollectionDto> collections = await connection.QueryAsync<CollectionDto>("[dbo].[spGetCollections]", new { search = search }, commandType: CommandType.StoredProcedure);
                 List<CollectionDto> collections = new List<CollectionDto>();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    collections = connection.Query<CollectionDto>("dbo.spGetCollections", new
+                    {
+                        search = search
+                    },
+                    commandType: CommandType.StoredProcedure).ToList();
+                }
 
                 _logger.LogInformation("GetCollections success response.");
                 return collections.ToList();

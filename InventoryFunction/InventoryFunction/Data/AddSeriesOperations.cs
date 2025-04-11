@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using System.Linq;
 
 namespace InventoryFunction.Data
 {
@@ -44,10 +45,23 @@ namespace InventoryFunction.Data
             try
             {
                 _logger.LogDebug("AddSeries request received.");
+                int id = 0;
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //int id = await connection.QueryFirstAsync<int>("[dbo].[spAddSeries]", new { series_name = series.SERIES_NAME, description = series.SERIES_DESCRIPTION, lastmodifiedby = series.SERIES_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
-                int id = 1;
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    id = connection.Query<int>("dbo.spAddSeries", new
+                    {
+                        series_name = series.SERIES_NAME,
+                        description = series.SERIES_DESCRIPTION,
+                        lastmodifiedby = series.SERIES_LAST_MODIFIED_BY,
+                    },
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("AddSeries success response.");
                 return id;

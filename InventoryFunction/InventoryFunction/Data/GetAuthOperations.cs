@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using System.Linq;
 
 namespace InventoryFunction.Data
 {
@@ -44,10 +45,21 @@ namespace InventoryFunction.Data
             try
             {
                 _logger.LogDebug("GetAuth request received.");
-
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //AuthDto auth = await connection.QueryFirstAsync<AuthDto>("[dbo].[spGetAuth]", new { id }, commandType: CommandType.StoredProcedure);
                 AuthDto auth = new AuthDto();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    auth = connection.Query<AuthDto>($"dbo.spGetAuth", new
+                    {
+                        id = id
+                    },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("GetAuth success response.");
                 return auth;

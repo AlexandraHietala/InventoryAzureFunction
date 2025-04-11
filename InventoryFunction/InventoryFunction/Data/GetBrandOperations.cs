@@ -58,11 +58,11 @@ namespace InventoryFunction.Data
 						connection.Open();
 					}
 
-					brand = connection.Query<BrandDto>($"dbo.spGetBrand @id={id}", new
+					brand = connection.Query<BrandDto>($"dbo.spGetBrand", new
 					{
 						id = id
 					},
-					commandType: CommandType.StoredProcedure).FirstOrDefault(); //TODO: finish converting to this format
+					commandType: CommandType.StoredProcedure).FirstOrDefault();
 				}
 
                 _logger.LogInformation("GetBrand success response.");
@@ -101,14 +101,14 @@ namespace InventoryFunction.Data
 					if (connection.State == ConnectionState.Closed)
 					{
 						connection.Open();
-					}
+                    } 
 
-					brands = connection.Query<BrandDto>("dbo.spGetBrand", new
+                    brands = connection.Query<BrandDto>("dbo.spGetBrands", new
 					{
 						search = search
 					},
 					commandType: CommandType.StoredProcedure).ToList();
-				}
+                }
 
                 _logger.LogInformation("GetBrands success response.");
                 return brands.ToList();

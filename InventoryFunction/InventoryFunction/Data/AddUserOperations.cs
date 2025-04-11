@@ -6,6 +6,8 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using InventoryFunction.Models.Classes;
+using System.Linq;
 
 namespace InventoryFunction.Data
 {
@@ -44,10 +46,25 @@ namespace InventoryFunction.Data
             try
             {
                 _logger.LogDebug("AddUser request received.");
+                int id = 0;
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //int id = await connection.QueryFirstAsync<int>("[dbo].[spAddUser]", new { name = user.NAME, salt = user.PASS_SALT, hash = user.PASS_HASH, role = user.ROLE_ID, lastmodifiedby = user.LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
-                int id = 1;
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    id = connection.Query<int>("dbo.spAddUser", new
+                    {
+                        name = user.NAME,
+                        salt = user.PASS_SALT,
+                        hash = user.PASS_HASH,
+                        role = user.ROLE_ID,
+                        lastmodifiedby = user.LAST_MODIFIED_BY
+                    },
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("AddUser success response.");
                 return id;
