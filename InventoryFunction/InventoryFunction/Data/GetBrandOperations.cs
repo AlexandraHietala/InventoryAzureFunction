@@ -58,7 +58,7 @@ namespace InventoryFunction.Data
 						connection.Open();
 					}
 
-					brand = connection.Query<BrandDto>("dbo.spGetBrand", new
+					brand = connection.Query<BrandDto>($"dbo.spGetBrand @id={id}", new
 					{
 						id = id
 					},
