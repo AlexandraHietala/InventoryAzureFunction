@@ -59,7 +59,7 @@ namespace InventoryFunction.Functions
                 await _workflow.UpdateUser(user);
 
                 // Respond
-                _logger.LogInformation("XXX success response.");
+                _logger.LogInformation("UpdateUser success response.");
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
