@@ -78,7 +78,7 @@ namespace InventoryFunction.Functions
             {
                 var response = req.CreateResponse(HttpStatusCode.BadRequest);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString($"[200100004] AddItem ArgumentException: {ae.Message}.");
+                response.WriteString($"{ae.Message}.");
                 return response;
             }
             catch (InvalidOperationException ioe)

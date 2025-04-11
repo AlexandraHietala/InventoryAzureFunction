@@ -59,7 +59,7 @@
 //            {
 //                var response = req.CreateResponse(HttpStatusCode.BadRequest);
 //                response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-//                response.WriteString($"[200100007] GetItemComment ArgumentException: {ae.Message}.");
+//                response.WriteString($"{ae.Message}.");
 //                return response;
 //            }
 //            catch (InvalidOperationException ioe)
@@ -107,7 +107,7 @@
 //            {
 //                var response = req.CreateResponse(HttpStatusCode.BadRequest);
 //                response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-//                response.WriteString($"[200100010] GetItemCommentsByItem ArgumentException: {ae.Message}.");
+//                response.WriteString($"{ae.Message}.");
 //                return response;
 //            }
 //            catch (InvalidOperationException ioe)
