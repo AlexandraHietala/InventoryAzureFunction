@@ -2,7 +2,7 @@ using InventoryFunction.Models.Classes;
 using InventoryFunction.Models.DTOs;
 using System.Collections.Generic;
 
-namespace CollectionApi.Models.Converters.V1
+namespace InventoryFunction.Models.Converters
 {
     public class CollectionConverter
     {
