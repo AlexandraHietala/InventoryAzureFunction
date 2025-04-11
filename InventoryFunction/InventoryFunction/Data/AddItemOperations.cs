@@ -24,7 +24,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<AddItemOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenItem")!;
+            //_connString = _configuration.GetConnectionString("StarryEdenItem");
         }
 
         public async Task<int> AddItem(ItemDto item)
