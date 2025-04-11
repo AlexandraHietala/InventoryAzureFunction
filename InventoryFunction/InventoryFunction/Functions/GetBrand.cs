@@ -32,8 +32,8 @@ namespace InventoryFunction.Functions
             _lightValidator = new BrandLightValidator();
         }
 
-        [Function("GetBrand")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{id}")] HttpRequestData req)
+        [Function("Inventory")]
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "getbrand/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetBrand request received.");
 
@@ -79,8 +79,8 @@ namespace InventoryFunction.Functions
             }
         }
 
-        [Function("GetBrands")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "{search}")] HttpRequestData req)
+        [Function("Inventory")]
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "getbrands/{search}")] HttpRequestData req)
         {
             _logger.LogDebug("GetBrands request received.");
  
