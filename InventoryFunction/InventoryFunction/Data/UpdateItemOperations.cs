@@ -16,16 +16,28 @@ namespace InventoryFunction.Data
 
     public class UpdateItemOperations : IUpdateItemOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public UpdateItemOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public UpdateItemOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<UpdateItemOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+            _dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task UpdateItem(ItemDto item)
         {
@@ -34,7 +46,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("UpdateItem request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[app].[spUpdateItem]", new { id = item.ID, collection_id = item.COLLECTION_ID, status = item.STATUS, type = item.TYPE, brand_id = item.BRAND_ID, series_id = item.SERIES_ID, name = item.NAME, description = item.DESCRIPTION, format = item.FORMAT, size = item.SIZE, year = item.YEAR, photo = item.PHOTO, lastmodifiedby = item.LAST_MODIFIED_BY  }, commandType: CommandType.StoredProcedure);
+                //await connection.QueryFirstAsync<bool>("[dbo].[spUpdateItem]", new { id = item.ID, collection_id = item.COLLECTION_ID, status = item.STATUS, type = item.TYPE, brand_id = item.BRAND_ID, series_id = item.SERIES_ID, name = item.NAME, description = item.DESCRIPTION, format = item.FORMAT, size = item.SIZE, year = item.YEAR, photo = item.PHOTO, lastmodifiedby = item.LAST_MODIFIED_BY  }, commandType: CommandType.StoredProcedure);
 
                 _logger.LogInformation("UpdateItem success response.");
                 return;

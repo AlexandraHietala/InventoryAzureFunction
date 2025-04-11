@@ -19,16 +19,28 @@ namespace InventoryFunction.Data
 
     public class GetRoleOperations : IRoleOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public GetRoleOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public GetRoleOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<GetRoleOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task<RoleDto> GetRole(int id)
         {
@@ -37,7 +49,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetRole request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //RoleDto role = await connection.QueryFirstAsync<RoleDto>("[app].[spGetRole]", new { id }, commandType: CommandType.StoredProcedure);
+                //RoleDto role = await connection.QueryFirstAsync<RoleDto>("[dbo].[spGetRole]", new { id }, commandType: CommandType.StoredProcedure);
                 RoleDto role = new RoleDto();
 
                 _logger.LogInformation("GetRole success response.");
@@ -71,7 +83,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetRoles request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<RoleDto> roles = await connection.QueryAsync<RoleDto>("[app].[spGetRoles]", new { }, commandType: CommandType.StoredProcedure);
+                //IEnumerable<RoleDto> roles = await connection.QueryAsync<RoleDto>("[dbo].[spGetRoles]", new { }, commandType: CommandType.StoredProcedure);
                 List<RoleDto> roles = new List<RoleDto>();
 
                 _logger.LogInformation("GetRoles success response.");

@@ -34,7 +34,7 @@ namespace InventoryFunction.Validators.DataValidators
                 _logger.LogDebug("VerifySeries request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //SeriesDto series = await connection.QueryFirstAsync<SeriesDto>("[app].[spGetASeries]", new { id }, commandType: CommandType.StoredProcedure);
+                //SeriesDto series = await connection.QueryFirstAsync<SeriesDto>("[dbo].[spGetASeries]", new { id }, commandType: CommandType.StoredProcedure);
                 SeriesDto series = new SeriesDto();
 
                 _logger.LogInformation("VerifySeries success response.");

@@ -16,16 +16,28 @@ namespace InventoryFunction.Data
 
     public class AddItemCommentOperations : IAddItemCommentOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public AddItemCommentOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public AddItemCommentOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<AddItemCommentOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory");
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task<int> AddItemComment(ItemCommentDto comment)
         {
@@ -34,7 +46,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("AddItemComment request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //int id = await connection.QueryFirstAsync<int>("[app].[spAddItemComment]", new { item_id = comment.ITEM_ID, comment = comment.COMMENT, lastmodifiedby = comment.COMMENT_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
+                //int id = await connection.QueryFirstAsync<int>("[dbo].[spAddItemComment]", new { item_id = comment.ITEM_ID, comment = comment.COMMENT, lastmodifiedby = comment.COMMENT_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
                 int id = 1;
 
                 _logger.LogInformation("AddItemComment success response.");

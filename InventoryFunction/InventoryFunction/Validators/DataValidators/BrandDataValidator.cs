@@ -34,7 +34,7 @@ namespace InventoryFunction.Validators.DataValidators
                 _logger.LogDebug("VerifyBrand request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //BrandDto brand = await connection.QueryFirstAsync<BrandDto>("[app].[spGetBrand]", new { id }, commandType: CommandType.StoredProcedure);
+                //BrandDto brand = await connection.QueryFirstAsync<BrandDto>("[dbo].[spGetBrand]", new { id }, commandType: CommandType.StoredProcedure);
                 BrandDto brand = new BrandDto();
 
                 _logger.LogInformation("VerifyBrand success response.");

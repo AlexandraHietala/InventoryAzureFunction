@@ -21,16 +21,28 @@ namespace InventoryFunction.Data
 
     public class GetItemOperations : IGetItemOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public GetItemOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public GetItemOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<GetItemOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task<ItemDto> GetItem(int id)
         {
@@ -39,7 +51,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetItem request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //ItemDto item = await connection.QueryFirstAsync<ItemDto>("[app].[spGetItem]", new { id = id }, commandType: CommandType.StoredProcedure);
+                //ItemDto item = await connection.QueryFirstAsync<ItemDto>("[dbo].[spGetItem]", new { id = id }, commandType: CommandType.StoredProcedure);
                 ItemDto item = new ItemDto();
 
                 _logger.LogInformation("GetItem success response.");
@@ -72,7 +84,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetItems request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<ItemDto> items = await connection.QueryAsync<ItemDto>("[app].[spGetItems]", new { search = search }, commandType: CommandType.StoredProcedure);
+                //IEnumerable<ItemDto> items = await connection.QueryAsync<ItemDto>("[dbo].[spGetItems]", new { search = search }, commandType: CommandType.StoredProcedure);
                 List<ItemDto> items = new List<ItemDto>();
 
                 _logger.LogInformation("GetItems success response.");
@@ -106,7 +118,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetItemsPerCollection request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<ItemDto> items = await connection.QueryAsync<ItemDto>("[app].[spGetItemsPerCollection]", new { collection_id = collectionId }, commandType: CommandType.StoredProcedure);
+                //IEnumerable<ItemDto> items = await connection.QueryAsync<ItemDto>("[dbo].[spGetItemsPerCollection]", new { collection_id = collectionId }, commandType: CommandType.StoredProcedure);
                 List<ItemDto> items = new List<ItemDto>();
 
                 _logger.LogInformation("GetItemsPerCollection success response.");

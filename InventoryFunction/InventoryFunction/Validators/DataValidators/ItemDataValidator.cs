@@ -34,7 +34,7 @@ namespace InventoryFunction.Validators.DataValidators
                 _logger.LogDebug("VerifyItem request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //ItemDto item = await connection.QueryFirstAsync<ItemDto>("[app].[spGetItem]", new { id }, commandType: CommandType.StoredProcedure);
+                //ItemDto item = await connection.QueryFirstAsync<ItemDto>("[dbo].[spGetItem]", new { id }, commandType: CommandType.StoredProcedure);
                 ItemDto item = new ItemDto();
 
                 _logger.LogInformation("VerifyItem success response.");

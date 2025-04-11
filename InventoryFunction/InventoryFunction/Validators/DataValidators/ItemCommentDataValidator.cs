@@ -34,7 +34,7 @@ namespace InventoryFunction.Validators.DataValidators
                 _logger.LogDebug("VerifyItemComment request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //ItemCommentDto comment = await connection.QueryFirstAsync<ItemCommentDto>("[app].[spGetItemComment]", new { id = id }, commandType: CommandType.StoredProcedure);
+                //ItemCommentDto comment = await connection.QueryFirstAsync<ItemCommentDto>("[dbo].[spGetItemComment]", new { id = id }, commandType: CommandType.StoredProcedure);
                 ItemCommentDto comment = new ItemCommentDto();
 
                 _logger.LogInformation("VerifyItemComment success response.");

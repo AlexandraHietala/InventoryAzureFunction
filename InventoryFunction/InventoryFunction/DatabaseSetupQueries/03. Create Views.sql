@@ -5,65 +5,65 @@
 
 -----------------------------------------------------------
 
-USE [SEInventory]
+USE [SEInventoryDB]
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwRoles] AS
+CREATE OR ALTER VIEW [dbo].[vwRoles] AS
 SELECT *
-FROM [app].[Roles]
+FROM [dbo].[Roles]
 
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwUsers] AS
+CREATE OR ALTER VIEW [dbo].[vwUsers] AS
 	
 SELECT *
-FROM [app].[Users]
+FROM [dbo].[Users]
 
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwSeries] AS
+CREATE OR ALTER VIEW [dbo].[vwSeries] AS
 	
 SELECT *
-FROM [app].[Series]
+FROM [dbo].[Series]
 
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwBrands] AS
+CREATE OR ALTER VIEW [dbo].[vwBrands] AS
 	
 SELECT *
-FROM [app].[Brands]
+FROM [dbo].[Brands]
 
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwCollections] AS
+CREATE OR ALTER VIEW [dbo].[vwCollections] AS
 	
 SELECT *
-FROM [app].[Collections]
+FROM [dbo].[Collections]
 
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwItems] AS
+CREATE OR ALTER VIEW [dbo].[vwItems] AS
 	
 SELECT *
-FROM [app].[Items]
+FROM [dbo].[Items]
 
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwItems_Expanded]
+CREATE OR ALTER VIEW [dbo].[vwItems_Expanded]
 AS
 
 	SELECT
@@ -73,7 +73,7 @@ AS
 		SUBSTRING (
 		(
 			SELECT ' ' + CAST(ser.ID as varchar) + ' ' + ser.SERIES_NAME AS [text()]
-			FROM [app].[vwSeries] ser
+			FROM [dbo].[vwSeries] ser
 			WHERE item.SERIES_ID = ser.ID
 			ORDER BY ser.ID
 			FOR XML PATH ('')
@@ -83,7 +83,7 @@ AS
 		SUBSTRING (
 		(
 			SELECT ' ' + CAST(bra.ID as varchar) + ' ' + bra.BRAND_NAME AS [text()]
-			FROM [app].[vwBrands] bra
+			FROM [dbo].[vwBrands] bra
 			WHERE item.BRAND_ID = bra.ID
 			ORDER BY bra.ID
 			FOR XML PATH ('')
@@ -93,25 +93,25 @@ AS
 		SUBSTRING (
 		(
 			SELECT ' ' + CAST(col.ID as varchar) + ' ' + col.COLLECTION_NAME AS [text()]
-			FROM [app].[vwCollections] col
+			FROM [dbo].[vwCollections] col
 			WHERE item.COLLECTION_ID = col.ID
 			ORDER BY col.ID
 			FOR XML PATH ('')
 		), 1, 10000) [COLLECTION]
 
-	FROM [app].[vwItems] item;
+	FROM [dbo].[vwItems] item;
 
 GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER VIEW [app].[vwItems_Search]
+CREATE OR ALTER VIEW [dbo].[vwItems_Search]
 AS
 
 SELECT
 	    item.*,
 		(CONCAT([ID],' ',[STATUS],' ',[TYPE],' ',[SERIES],' ',[BRAND],' ',[NAME], ' ', [DESCRIPTION], ' ',[FORMAT],' ',[SIZE],' ',[YEAR])) as [FULLDATA]
-FROM [app].[vwItems_Expanded] item
+FROM [dbo].[vwItems_Expanded] item
 
 GO
 

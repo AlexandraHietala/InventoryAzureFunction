@@ -19,16 +19,28 @@ namespace InventoryFunction.Data
 
     public class GetUserOperations : IGetUserOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public GetUserOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public GetUserOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<GetUserOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task<UserDto> GetUser(int id)
         {
@@ -37,7 +49,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetUser request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //UserDto user = await connection.QueryFirstAsync<UserDto>("[app].[spGetUser]", new { id }, commandType: CommandType.StoredProcedure);
+                //UserDto user = await connection.QueryFirstAsync<UserDto>("[dbo].[spGetUser]", new { id }, commandType: CommandType.StoredProcedure);
                 UserDto user = new UserDto();
 
                 _logger.LogInformation("GetUser success response.");
@@ -70,7 +82,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetUsers request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<UserDto> users = await connection.QueryAsync<UserDto>("[app].[spGetUsers]", new { }, commandType: CommandType.StoredProcedure);
+                //IEnumerable<UserDto> users = await connection.QueryAsync<UserDto>("[dbo].[spGetUsers]", new { }, commandType: CommandType.StoredProcedure);
                 List<UserDto> users = new List<UserDto>();
 
                 _logger.LogInformation("GetUsers success response.");

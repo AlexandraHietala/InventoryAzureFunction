@@ -5,12 +5,12 @@
 
 -----------------------------------------------------------
 
-USE [SEInventory]
+USE [SEInventoryDB]
 GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [hist].[Audit_Users](
+CREATE TABLE [dbo].[Audit_Users](
 	[EFFECTIVE_DATE] [datetime] NOT NULL DEFAULT GetDate(),
 	[INEFFECTIVE_DATE] [datetime] NULL,
 	[ID] int NOT NULL,
@@ -34,7 +34,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [hist].[Audit_Series](
+CREATE TABLE [dbo].[Audit_Series](
 	[EFFECTIVE_DATE] [datetime] NOT NULL DEFAULT GetDate(),
 	[INEFFECTIVE_DATE] [datetime] NULL,
 	[ID] [int] NOT NULL,
@@ -56,7 +56,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [hist].[Audit_Brands](
+CREATE TABLE [dbo].[Audit_Brands](
 	[EFFECTIVE_DATE] [datetime] NOT NULL DEFAULT GetDate(),
 	[INEFFECTIVE_DATE] [datetime] NULL,
 	[ID] [int] NOT NULL,
@@ -78,7 +78,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [hist].[Audit_Collections](
+CREATE TABLE [dbo].[Audit_Collections](
 	[EFFECTIVE_DATE] [datetime] NOT NULL DEFAULT GetDate(),
 	[INEFFECTIVE_DATE] [datetime] NULL,
 	[ID] [int] NOT NULL,
@@ -100,7 +100,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [hist].[Audit_Items](
+CREATE TABLE [dbo].[Audit_Items](
 	[EFFECTIVE_DATE] [datetime] NOT NULL DEFAULT GetDate(),
 	[INEFFECTIVE_DATE] [datetime] NULL,
 	[ID] [int] NOT NULL,
@@ -131,7 +131,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [hist].[Audit_ItemComments](
+CREATE TABLE [dbo].[Audit_ItemComments](
 	[EFFECTIVE_DATE] [datetime] NOT NULL DEFAULT GetDate(),
 	[INEFFECTIVE_DATE] [datetime] NULL,
 	[ID] [int] NOT NULL,

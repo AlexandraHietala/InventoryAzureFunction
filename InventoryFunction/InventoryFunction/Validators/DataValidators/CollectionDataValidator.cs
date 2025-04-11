@@ -34,7 +34,7 @@ namespace InventoryFunction.Validators.DataValidators
                 _logger.LogDebug("VerifyCollection request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //CollectionDto collection = await connection.QueryFirstAsync<CollectionDto>("[app].[spGetCollection]", new { id }, commandType: CommandType.StoredProcedure);
+                //CollectionDto collection = await connection.QueryFirstAsync<CollectionDto>("[dbo].[spGetCollection]", new { id }, commandType: CommandType.StoredProcedure);
                 CollectionDto collection = new CollectionDto();
 
                 _logger.LogInformation("VerifyCollection success response.");

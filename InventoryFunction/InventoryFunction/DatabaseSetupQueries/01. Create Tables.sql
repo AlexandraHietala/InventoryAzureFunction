@@ -5,12 +5,12 @@
 
 -----------------------------------------------------------
 
-USE [SEInventory]
+USE [SEInventoryDB]
 GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [app].[Roles](
+CREATE TABLE [dbo].[Roles](
 	[ID] [int] PRIMARY KEY NOT NULL,
 	[DESCRIPTION] [varchar](250) NULL,
 )
@@ -19,7 +19,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [app].[Users](
+CREATE TABLE [dbo].[Users](
 	[ID] [int] IDENTITY(1,1) PRIMARY KEY NOT NULL,
 	[NAME] [varchar](250) NOT NULL,
 	[PASS_SALT] [varchar](250) NOT NULL,
@@ -33,15 +33,15 @@ CREATE TABLE [app].[Users](
 
 GO
 
-ALTER TABLE [app].[Users] WITH CHECK ADD CONSTRAINT [FK_Users_Roles] FOREIGN KEY([ROLE_ID]) REFERENCES [app].[Roles] ([ID])
+ALTER TABLE [dbo].[Users] WITH CHECK ADD CONSTRAINT [FK_Users_Roles] FOREIGN KEY([ROLE_ID]) REFERENCES [dbo].[Roles] ([ID])
 GO
 
-ALTER TABLE [app].[Users] CHECK CONSTRAINT [FK_Users_Roles] 
+ALTER TABLE [dbo].[Users] CHECK CONSTRAINT [FK_Users_Roles] 
 GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [app].[Series](
+CREATE TABLE [dbo].[Series](
 	[ID] [int] IDENTITY(1,1) PRIMARY KEY NOT NULL,
 	[SERIES_NAME] [varchar](250) NOT NULL,
 	[DESCRIPTION] [varchar](250) NULL,
@@ -55,7 +55,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [app].[Brands](
+CREATE TABLE [dbo].[Brands](
 	[ID] [int] PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	[BRAND_NAME] [varchar](50) NOT NULL,
 	[DESCRIPTION] [varchar](250) NULL,
@@ -69,7 +69,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [app].[Collections](
+CREATE TABLE [dbo].[Collections](
 	[ID] [int] PRIMARY KEY IDENTITY(1,1) NOT NULL,
 	[COLLECTION_NAME] [varchar](50) NOT NULL,
 	[DESCRIPTION] [varchar](250) NULL,
@@ -83,7 +83,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [app].[Items](
+CREATE TABLE [dbo].[Items](
 	[ID] [int] IDENTITY(1,1) PRIMARY KEY NOT NULL,
 	[COLLECTION_ID] [int] NOT NULL,
 	[STATUS] [varchar](10) NOT NULL CHECK ([STATUS] IN ('OWNED','NOT OWNED','WISHLIST','PENDING')) DEFAULT 'OWNED',
@@ -104,30 +104,30 @@ CREATE TABLE [app].[Items](
 
 GO
 
-ALTER TABLE [app].[Items]  WITH CHECK ADD  CONSTRAINT [FK_Items_Series] FOREIGN KEY([SERIES_ID])
-REFERENCES [app].[Series] ([ID])
+ALTER TABLE [dbo].[Items]  WITH CHECK ADD  CONSTRAINT [FK_Items_Series] FOREIGN KEY([SERIES_ID])
+REFERENCES [dbo].[Series] ([ID])
 GO
 
-ALTER TABLE [app].[Items] CHECK CONSTRAINT [FK_Items_Series]
+ALTER TABLE [dbo].[Items] CHECK CONSTRAINT [FK_Items_Series]
 GO
 
-ALTER TABLE [app].[Items]  WITH CHECK ADD  CONSTRAINT [FK_Items_Brand] FOREIGN KEY([BRAND_ID])
-REFERENCES [app].[Brands] ([ID])
+ALTER TABLE [dbo].[Items]  WITH CHECK ADD  CONSTRAINT [FK_Items_Brand] FOREIGN KEY([BRAND_ID])
+REFERENCES [dbo].[Brands] ([ID])
 GO
 
-ALTER TABLE [app].[Items] CHECK CONSTRAINT [FK_Items_Brand]
+ALTER TABLE [dbo].[Items] CHECK CONSTRAINT [FK_Items_Brand]
 GO
 
-ALTER TABLE [app].[Items]  WITH CHECK ADD  CONSTRAINT [FK_Items_Collection] FOREIGN KEY([COLLECTION_ID])
-REFERENCES [app].[Collections] ([ID])
+ALTER TABLE [dbo].[Items]  WITH CHECK ADD  CONSTRAINT [FK_Items_Collection] FOREIGN KEY([COLLECTION_ID])
+REFERENCES [dbo].[Collections] ([ID])
 GO
 
-ALTER TABLE [app].[Items] CHECK CONSTRAINT [FK_Items_Collection]
+ALTER TABLE [dbo].[Items] CHECK CONSTRAINT [FK_Items_Collection]
 GO
 
 -----------------------------------------------------------
 
-CREATE TABLE [app].[ItemComments](
+CREATE TABLE [dbo].[ItemComments](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[ITEM_ID] [int] NOT NULL,
 	[COMMENT] [varchar](max) NOT NULL,
@@ -144,11 +144,11 @@ CREATE TABLE [app].[ItemComments](
 
 GO
 
-ALTER TABLE [app].[ItemComments]  WITH CHECK ADD  CONSTRAINT [FK_ItemComments_Items] FOREIGN KEY([ITEM_ID])
-REFERENCES [app].[Items] ([ID])
+ALTER TABLE [dbo].[ItemComments]  WITH CHECK ADD  CONSTRAINT [FK_ItemComments_Items] FOREIGN KEY([ITEM_ID])
+REFERENCES [dbo].[Items] ([ID])
 GO
 
-ALTER TABLE [app].[ItemComments] CHECK CONSTRAINT [FK_ItemComments_Items]
+ALTER TABLE [dbo].[ItemComments] CHECK CONSTRAINT [FK_ItemComments_Items]
 GO
 
 -----------------------------------------------------------

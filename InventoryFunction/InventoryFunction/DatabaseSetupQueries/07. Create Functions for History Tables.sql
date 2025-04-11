@@ -5,7 +5,7 @@
 
 -----------------------------------------------------------
 
-USE [SEInventory]
+USE [SEInventoryDB]
 GO
 
 SET ANSI_NULLS ON
@@ -15,7 +15,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER FUNCTION [app].[fnGetUserHistory]
+CREATE OR ALTER FUNCTION [dbo].[fnGetUserHistory]
 (
    @id int
 )
@@ -41,7 +41,7 @@ AS
 						nextROLE_ID = LEAD(ROLE_ID) OVER (PARTITION BY [ID] ORDER BY EFFECTIVE_DATE),	
 						nextLAST_MODIFIED_BY = LEAD(LAST_MODIFIED_BY) OVER (PARTITION BY [ID] ORDER BY EFFECTIVE_DATE
 					)
-				FROM [hist].[Audit_Users]
+				FROM [dbo].[Audit_Users]
 				WHERE [ID] = @id
 			), 
 			userChangesDraft2 AS (
@@ -85,12 +85,12 @@ AS
 							' NAME: [' + CAST([NAME] AS NVARCHAR(500)) + '],' + 
 							' PASS SALT: [' + CAST(PASS_SALT AS NVARCHAR(500)) + '],' + 
 							' PASS HASH: [' + CAST(PASS_HASH AS NVARCHAR(500)) + '],' + 
-							' ROLE: [' + CASE WHEN ROLE_ID IS NULL THEN '' ELSE CAST(ROLE_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 [DESCRIPTION] FROM [app].[vwRoles] WHERE ID = ROLE_ID) + ')' END + ']'
+							' ROLE: [' + CASE WHEN ROLE_ID IS NULL THEN '' ELSE CAST(ROLE_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 [DESCRIPTION] FROM [dbo].[vwRoles] WHERE ID = ROLE_ID) + ')' END + ']'
 						) as [SNAPSHOT],
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Users]
+					FROM [dbo].[Audit_Users]
 					WHERE
 						[ID] = @id
 						AND ADDED = 1
@@ -113,12 +113,12 @@ AS
 							' NAME: [' + CAST([NAME] AS NVARCHAR(500)) + '],' + 
 							' PASS SALT: [' + CAST(PASS_SALT AS NVARCHAR(500)) + '],' + 
 							' PASS HASH: [' + CAST(PASS_HASH AS NVARCHAR(500)) + '],' + 
-							' ROLE: [' + CASE WHEN ROLE_ID IS NULL THEN '' ELSE CAST(ROLE_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 [DESCRIPTION] FROM [app].[vwRoles] WHERE ID = ROLE_ID) + ')' END + ']'
+							' ROLE: [' + CASE WHEN ROLE_ID IS NULL THEN '' ELSE CAST(ROLE_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 [DESCRIPTION] FROM [dbo].[vwRoles] WHERE ID = ROLE_ID) + ')' END + ']'
 						) as [SNAPSHOT],
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Users]
+					FROM [dbo].[Audit_Users]
 					WHERE
 						[ID] = @id
 						AND DELETED = 1
@@ -143,7 +143,7 @@ AS
 
 -----------------------------------------------------------
 
-CREATE OR ALTER FUNCTION [app].[fnGetSeriesHistory]
+CREATE OR ALTER FUNCTION [dbo].[fnGetSeriesHistory]
 (
    @id int
 )
@@ -165,7 +165,7 @@ AS
 						nextDESCRIPTION = LEAD([DESCRIPTION]) OVER (PARTITION BY ID ORDER BY EFFECTIVE_DATE),
 						nextLAST_MODIFIED_BY = LEAD(LAST_MODIFIED_BY) OVER (PARTITION BY ID ORDER BY EFFECTIVE_DATE
 					)
-				FROM [hist].[Audit_Series]
+				FROM [dbo].[Audit_Series]
 				WHERE ID = @id
 			), 
 			seriesChangesDraft2 AS (
@@ -210,7 +210,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Series]
+					FROM [dbo].[Audit_Series]
 					WHERE
 						ID = @id
 						AND ADDED = 1
@@ -236,7 +236,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Series]
+					FROM [dbo].[Audit_Series]
 					WHERE
 						ID = @id
 						AND DELETED = 1
@@ -261,7 +261,7 @@ AS
 
 -----------------------------------------------------------
 
-CREATE OR ALTER FUNCTION [app].[fnGetBrandHistory]
+CREATE OR ALTER FUNCTION [dbo].[fnGetBrandHistory]
 (
    @id int
 )
@@ -283,7 +283,7 @@ AS
 						nextDESCRIPTION = LEAD(DESCRIPTION) OVER (PARTITION BY ID ORDER BY EFFECTIVE_DATE),
 						nextLAST_MODIFIED_BY = LEAD(LAST_MODIFIED_BY) OVER (PARTITION BY ID ORDER BY EFFECTIVE_DATE
 					)
-				FROM [hist].[Audit_Brands]
+				FROM [dbo].[Audit_Brands]
 				WHERE ID = @id
 			), 
 			brandChangesDraft2 AS (
@@ -328,7 +328,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Brands]
+					FROM [dbo].[Audit_Brands]
 					WHERE
 						ID = @id
 						AND ADDED = 1
@@ -354,7 +354,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Brands]
+					FROM [dbo].[Audit_Brands]
 					WHERE
 						ID = @id
 						AND DELETED = 1
@@ -379,7 +379,7 @@ AS
 
 -----------------------------------------------------------
 
-CREATE OR ALTER FUNCTION [app].[fnGetCollectionHistory]
+CREATE OR ALTER FUNCTION [dbo].[fnGetCollectionHistory]
 (
    @id int
 )
@@ -401,7 +401,7 @@ AS
 						nextDESCRIPTION = LEAD([DESCRIPTION]) OVER (PARTITION BY ID ORDER BY EFFECTIVE_DATE),
 						nextLAST_MODIFIED_BY = LEAD(LAST_MODIFIED_BY) OVER (PARTITION BY ID ORDER BY EFFECTIVE_DATE
 					)
-				FROM [hist].[Audit_Collections]
+				FROM [dbo].[Audit_Collections]
 				WHERE ID = @id
 			), 
 			collectionChangesDraft2 AS (
@@ -446,7 +446,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Collections]
+					FROM [dbo].[Audit_Collections]
 					WHERE
 						ID = @id
 						AND ADDED = 1
@@ -472,7 +472,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Collections]
+					FROM [dbo].[Audit_Collections]
 					WHERE
 						ID = @id
 						AND DELETED = 1
@@ -497,7 +497,7 @@ AS
 
 -----------------------------------------------------------
 
-CREATE OR ALTER FUNCTION [app].[fnGetItemHistory]
+CREATE OR ALTER FUNCTION [dbo].[fnGetItemHistory]
 (
    @id int
 )
@@ -537,7 +537,7 @@ AS
 						nextPHOTO = LEAD(PHOTO) OVER (PARTITION BY ID, CREATED_DATE ORDER BY EFFECTIVE_DATE),
 						nextLAST_MODIFIED_BY = LEAD(LAST_MODIFIED_BY) OVER (PARTITION BY ID, CREATED_DATE ORDER BY EFFECTIVE_DATE
 					)
-				FROM [hist].[Audit_Items]
+				FROM [dbo].[Audit_Items]
 				WHERE ID = @id
 			),
 			itemChangesDraft2 AS (
@@ -553,11 +553,11 @@ AS
 				FROM itemChangesDraft1
 					CROSS APPLY (VALUES																					
 						('ITEM ID', CAST(ID AS NVARCHAR(500)),CAST(nextID AS NVARCHAR(500))),
-						('COLLECTION', CAST((SELECT TOP 1 COLLECTION_NAME FROM [app].[vwCollections] WHERE ID = COLLECTION_ID) AS NVARCHAR(500)),CAST((SELECT TOP 1 COLLECTION_NAME FROM [app].[vwCollections] WHERE ID = nextCOLLECTION_ID) AS NVARCHAR(500))),
+						('COLLECTION', CAST((SELECT TOP 1 COLLECTION_NAME FROM [dbo].[vwCollections] WHERE ID = COLLECTION_ID) AS NVARCHAR(500)),CAST((SELECT TOP 1 COLLECTION_NAME FROM [dbo].[vwCollections] WHERE ID = nextCOLLECTION_ID) AS NVARCHAR(500))),
 						('STATUS', CAST(STATUS AS NVARCHAR(500)),CAST(nextSTATUS AS NVARCHAR(500))),
 						('TYPE', CAST(TYPE AS NVARCHAR(500)),CAST(nextTYPE AS NVARCHAR(500))),
-						('BRAND', CAST((SELECT TOP 1 BRAND_NAME FROM [app].[vwBrands] WHERE ID = BRAND_ID) AS NVARCHAR(500)),CAST((SELECT TOP 1 BRAND_NAME FROM [app].[vwBrands] WHERE ID = nextBRAND_ID) AS NVARCHAR(500))),
-						('SERIES', CAST((SELECT TOP 1 SERIES_NAME FROM [app].[vwSeries] WHERE ID = SERIES_ID) AS NVARCHAR(500)),CAST((SELECT TOP 1 SERIES_NAME FROM [app].[vwSeries] WHERE ID = nextSERIES_ID) AS NVARCHAR(500))),
+						('BRAND', CAST((SELECT TOP 1 BRAND_NAME FROM [dbo].[vwBrands] WHERE ID = BRAND_ID) AS NVARCHAR(500)),CAST((SELECT TOP 1 BRAND_NAME FROM [dbo].[vwBrands] WHERE ID = nextBRAND_ID) AS NVARCHAR(500))),
+						('SERIES', CAST((SELECT TOP 1 SERIES_NAME FROM [dbo].[vwSeries] WHERE ID = SERIES_ID) AS NVARCHAR(500)),CAST((SELECT TOP 1 SERIES_NAME FROM [dbo].[vwSeries] WHERE ID = nextSERIES_ID) AS NVARCHAR(500))),
 						('NAME', CAST(NAME AS NVARCHAR(500)),CAST(nextNAME AS NVARCHAR(500))),
 						('DESCRIPTION', CAST(DESCRIPTION AS NVARCHAR(500)),CAST(nextDESCRIPTION AS NVARCHAR(500))),
 						('FORMAT', CAST(FORMAT AS NVARCHAR(500)),CAST(nextFORMAT AS NVARCHAR(500))),
@@ -585,11 +585,11 @@ AS
 						NULL as NEXTVALUE,
 						(SELECT 
 							'ITEM ID: [' + CAST(ID AS NVARCHAR(500)) + '],' + 
-							' COLLECTION: [' + CASE WHEN COLLECTION_ID IS NULL THEN '' ELSE CAST(COLLECTION_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 COLLECTION_NAME FROM [app].[vwCollections] WHERE ID = COLLECTION_ID) + ')' END + '],' +  
+							' COLLECTION: [' + CASE WHEN COLLECTION_ID IS NULL THEN '' ELSE CAST(COLLECTION_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 COLLECTION_NAME FROM [dbo].[vwCollections] WHERE ID = COLLECTION_ID) + ')' END + '],' +  
 							' STATUS: [' + STATUS + '],' + 
 							' TYPE: [' + TYPE + '],' + 	
-							' BRAND: [' + CASE WHEN BRAND_ID IS NULL THEN '' ELSE CAST(BRAND_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 BRAND_NAME FROM [app].[vwBrands] WHERE ID = BRAND_ID) + ')' END + '],' +  
-							' SERIES: [' + CASE WHEN SERIES_ID IS NULL THEN '' ELSE CAST(SERIES_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 SERIES_NAME FROM [app].[vwSeries] WHERE ID = SERIES_ID) + ')' END + '],' +  
+							' BRAND: [' + CASE WHEN BRAND_ID IS NULL THEN '' ELSE CAST(BRAND_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 BRAND_NAME FROM [dbo].[vwBrands] WHERE ID = BRAND_ID) + ')' END + '],' +  
+							' SERIES: [' + CASE WHEN SERIES_ID IS NULL THEN '' ELSE CAST(SERIES_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 SERIES_NAME FROM [dbo].[vwSeries] WHERE ID = SERIES_ID) + ')' END + '],' +  
 							' NAME: [' + CASE WHEN NAME IS NULL THEN '' ELSE NAME END + '],' + 
 							' DESCRIPTION: [' + CASE WHEN DESCRIPTION IS NULL THEN '' ELSE DESCRIPTION END + '],' + 
 							' FORMAT: [' + FORMAT + '],' +
@@ -600,7 +600,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Items]
+					FROM [dbo].[Audit_Items]
 					WHERE
 						ID = @id
 						AND ADDED = 1
@@ -621,11 +621,11 @@ AS
 						NULL as NEXTVALUE,
 						(SELECT 
 							'ITEM ID: [' + CAST(ID AS NVARCHAR(500)) + '],' + 
-							' COLLECTION: [' + CASE WHEN COLLECTION_ID IS NULL THEN '' ELSE CAST(COLLECTION_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 COLLECTION_NAME FROM [app].[vwCollections] WHERE ID = COLLECTION_ID) + ')' END + '],' +  
+							' COLLECTION: [' + CASE WHEN COLLECTION_ID IS NULL THEN '' ELSE CAST(COLLECTION_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 COLLECTION_NAME FROM [dbo].[vwCollections] WHERE ID = COLLECTION_ID) + ')' END + '],' +  
 							' STATUS: [' + STATUS + '],' + 
 							' TYPE: [' + TYPE + '],' + 	
-							' BRAND: [' + CASE WHEN BRAND_ID IS NULL THEN '' ELSE CAST(BRAND_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 BRAND_NAME FROM [app].[vwBrands] WHERE ID = BRAND_ID) + ')' END + '],' +   +  
-							' SERIES: [' + CASE WHEN SERIES_ID IS NULL THEN '' ELSE CAST(SERIES_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 SERIES_NAME FROM [app].[vwSeries] WHERE ID = SERIES_ID) + ')' END + '],' +   +  
+							' BRAND: [' + CASE WHEN BRAND_ID IS NULL THEN '' ELSE CAST(BRAND_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 BRAND_NAME FROM [dbo].[vwBrands] WHERE ID = BRAND_ID) + ')' END + '],' +   +  
+							' SERIES: [' + CASE WHEN SERIES_ID IS NULL THEN '' ELSE CAST(SERIES_ID AS NVARCHAR(500)) + ' (' + (SELECT TOP 1 SERIES_NAME FROM [dbo].[vwSeries] WHERE ID = SERIES_ID) + ')' END + '],' +   +  
 							' NAME: [' + CASE WHEN NAME IS NULL THEN '' ELSE NAME END + '],' + 
 							' DESCRIPTION: [' + CASE WHEN DESCRIPTION IS NULL THEN '' ELSE DESCRIPTION END + '],' + 
 							' FORMAT: [' + FORMAT + '],' +
@@ -636,7 +636,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_Items]
+					FROM [dbo].[Audit_Items]
 					WHERE
 						ID = @id
 						AND DELETED = 1
@@ -661,7 +661,7 @@ AS
 
 -----------------------------------------------------------
 
-CREATE OR ALTER FUNCTION [app].[fnGetItemCommentHistory]
+CREATE OR ALTER FUNCTION [dbo].[fnGetItemCommentHistory]
 (
    @id int
 )
@@ -684,7 +684,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_ItemComments]
+					FROM [dbo].[Audit_ItemComments]
 					WHERE
 						ITEM_ID = @id
 						AND ADDED = 1
@@ -710,7 +710,7 @@ AS
 						EFFECTIVE_DATE,
 						INEFFECTIVE_DATE,
 						LAST_MODIFIED_BY 
-					FROM [hist].[Audit_ItemComments]
+					FROM [dbo].[Audit_ItemComments]
 					WHERE
 						ITEM_ID = @id
 						AND DELETED = 1

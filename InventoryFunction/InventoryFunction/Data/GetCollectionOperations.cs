@@ -20,16 +20,28 @@ namespace InventoryFunction.Data
 
     public class GetCollectionOperations : IGetCollectionOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public GetCollectionOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public GetCollectionOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<GetCollectionOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task<CollectionDto> GetCollection(int id)
         {
@@ -38,7 +50,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetCollection request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //CollectionDto collection = await connection.QueryFirstAsync<CollectionDto>("[app].[spGetCollection]", new { id = id }, commandType: CommandType.StoredProcedure);
+                //CollectionDto collection = await connection.QueryFirstAsync<CollectionDto>("[dbo].[spGetCollection]", new { id = id }, commandType: CommandType.StoredProcedure);
                 CollectionDto collection = new CollectionDto();
 
                 _logger.LogInformation("GetCollection success response.");
@@ -71,7 +83,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetCollections request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<CollectionDto> collections = await connection.QueryAsync<CollectionDto>("[app].[spGetCollections]", new { search = search }, commandType: CommandType.StoredProcedure);
+                //IEnumerable<CollectionDto> collections = await connection.QueryAsync<CollectionDto>("[dbo].[spGetCollections]", new { search = search }, commandType: CommandType.StoredProcedure);
                 List<CollectionDto> collections = new List<CollectionDto>();
 
                 _logger.LogInformation("GetCollections success response.");

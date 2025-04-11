@@ -6,6 +6,11 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using SqlConnectionStringBuilder = Microsoft.Data.SqlClient.SqlConnectionStringBuilder;
+using SqlConnection = Microsoft.Data.SqlClient.SqlConnection;
 
 namespace InventoryFunction.Data
 {
@@ -18,13 +23,25 @@ namespace InventoryFunction.Data
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _connString;
+        private readonly string _dataSource;
+        private readonly string _userId;
+        private readonly string _userPass;
+        private readonly string _initialCatalog;
+        private readonly SqlConnectionStringBuilder builder;
 
         public AddBrandOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<AddBrandOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
+            _dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+            _userId = _configuration.GetConnectionString("SEInventoryUserId");
+            _userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+            _initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+            builder = new SqlConnectionStringBuilder();
+            builder.DataSource = _dataSource;
+            builder.UserID = _userId;
+            builder.Password = _userPass;
+            builder.InitialCatalog = _initialCatalog;
         }
 
         public async Task<int> AddBrand(BrandDto brand)
@@ -32,10 +49,23 @@ namespace InventoryFunction.Data
             try
             {
                 _logger.LogDebug("AddBrand request received.");
+                int id = 0;
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //int id = await connection.QueryFirstAsync<int>("[app].[spAddBrand]", new { brand_name = brand.BRAND_NAME, description = brand.BRAND_DESCRIPTION, lastmodifiedby = brand.BRAND_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
-                int id = 1;
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    id = connection.Query<int>("dbo.spAddBrand", new
+                    {
+                        brand_name = brand.BRAND_NAME,
+                        description = brand.BRAND_DESCRIPTION,
+                        lastmodifiedby = brand.BRAND_LAST_MODIFIED_BY
+                    },
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("AddBrand success response.");
                 return id;
@@ -61,3 +91,99 @@ namespace InventoryFunction.Data
         }
     }
 }
+
+
+
+
+
+
+
+//        public int AddUser(User user)
+//        {
+//            int userId = 0;
+
+//            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+//            {
+//                if (connection.State == ConnectionState.Closed)
+//                {
+//                    connection.Open();
+//                }
+
+//                userId = connection.Query<int>("dbo.spAddUser", new
+//                {
+//                    Department = user.Department,
+//                    FirstName = user.FirstName,
+//                    LastName = user.LastName,
+//                    Birthday = user.Birthday,
+//                    StreetAddress = user.StreetAddress,
+//                    City = user.City,
+//                    State = user.State,
+//                    ZipCode = user.ZipCode
+//                },
+//                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+//            }
+
+//            return userId;
+//        }
+
+//        public void RemoveUser(int userId)
+//{
+//    using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+//    {
+//        if (connection.State == ConnectionState.Closed)
+//        {
+//            connection.Open();
+//        }
+
+//        connection.Execute(
+//            "dbo.spRemoveUser", new
+//            {
+//                UserId = userId
+//            },
+//            commandType: CommandType.StoredProcedure);
+//    }
+//}
+
+//        public void UpdateUser(User user)
+//        {
+//            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+//            {
+//                if (connection.State == ConnectionState.Closed)
+//                {
+//                    connection.Open();
+//                }
+
+//                connection.Execute(
+//                    "dbo.spUpdateUser", new
+//                    {
+//                        UserId = user.UserId,
+//                        Department = user.Department,
+//                        FirstName = user.FirstName,
+//                        LastName = user.LastName,
+//                        Birthday = user.Birthday,
+//                        StreetAddress = user.StreetAddress,
+//                        City = user.City,
+//                        State = user.State,
+//                        ZipCode = user.ZipCode
+//                    },
+//                    commandType: CommandType.StoredProcedure);
+//            }
+//        }
+
+//        public List<User> GetUsers()
+//        { 
+//            using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+//            {
+//                if (connection.State == ConnectionState.Closed)
+//                {
+//                    connection.Open();
+//                }
+
+//                var result = connection.QueryMultiple("SELECT UserId, Department, FirstName, LastName, Birthday, StreetAddress, City, State, ZipCode FROM dbo.vwUsers ORDER BY UserId DESC;",
+//                    commandType: CommandType.Text);
+
+//                return result?.Read<User>().AsList();
+//            }
+//        }
+
+

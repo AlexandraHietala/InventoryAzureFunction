@@ -15,16 +15,28 @@ namespace InventoryFunction.Data
 
     public class RemoveUserOperations : IRemoveUserOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public RemoveUserOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public RemoveUserOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<RemoveUserOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task RemoveUser(int id, string lastmodifiedby)
         {
@@ -33,7 +45,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("RemoveUser request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[app].[spRemoveUser]", new { id, lastmodifiedby }, commandType: CommandType.StoredProcedure);
+                //await connection.QueryFirstAsync<bool>("[dbo].[spRemoveUser]", new { id, lastmodifiedby }, commandType: CommandType.StoredProcedure);
 
                 _logger.LogInformation("RemoveUser success response.");
                 return;

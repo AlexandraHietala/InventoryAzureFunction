@@ -20,16 +20,28 @@ namespace InventoryFunction.Data
 
     public class GetSeriesOperations : IGetSeriesOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public GetSeriesOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public GetSeriesOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<GetSeriesOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task<SeriesDto> GetASeries(int id)
         {
@@ -38,7 +50,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetASeries request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //SeriesDto series = await connection.QueryFirstAsync<SeriesDto>("[app].[spGetASeries]", new { id = id }, commandType: CommandType.StoredProcedure);
+                //SeriesDto series = await connection.QueryFirstAsync<SeriesDto>("[dbo].[spGetASeries]", new { id = id }, commandType: CommandType.StoredProcedure);
                 SeriesDto series = new SeriesDto();
 
                 _logger.LogInformation("GetASeries success response.");
@@ -71,7 +83,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetSeries request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<SeriesDto> series = await connection.QueryAsync<SeriesDto>("[app].[spGetSeries]", new { search = search }, commandType: CommandType.StoredProcedure);
+                //IEnumerable<SeriesDto> series = await connection.QueryAsync<SeriesDto>("[dbo].[spGetSeries]", new { search = search }, commandType: CommandType.StoredProcedure);
                 List<SeriesDto> series = new List<SeriesDto>();
 
                 _logger.LogInformation("GetSeries success response.");

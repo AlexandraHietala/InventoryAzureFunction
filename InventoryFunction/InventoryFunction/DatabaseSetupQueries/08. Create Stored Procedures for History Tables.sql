@@ -5,7 +5,7 @@
 
 -----------------------------------------------------------
 
-USE [SEInventory]
+USE [SEInventoryDB]
 GO
 
 SET ANSI_NULLS ON
@@ -16,17 +16,17 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetGeneralItemHistory]
+CREATE OR ALTER PROCEDURE [dbo].[spGetGeneralItemHistory]
 	@id int
 AS
 
 BEGIN TRY
 
 	SELECT DATEOFCHANGE, CHANGEDBY, CHANGED, CHANGE 
-	FROM [app].[fnGetItemHistory] (@id)
+	FROM [dbo].[fnGetItemHistory] (@id)
 		UNION ALL 
 	SELECT DATEOFCHANGE, CHANGEDBY, CHANGED, CHANGE 
-	FROM [app].[fnGetItemCommentHistory] (@id)
+	FROM [dbo].[fnGetItemCommentHistory] (@id)
 	ORDER BY
 		DATEOFCHANGE DESC
 
@@ -54,7 +54,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetHistory]
+CREATE OR ALTER PROCEDURE [dbo].[spGetHistory]
 	@id int,
 	@hist varchar(100)
 AS
@@ -63,7 +63,7 @@ BEGIN TRY
 
 	DECLARE @sqlfinal nvarchar(1000);
 
-	SET @sqlfinal = 'SELECT DATEOFCHANGE, CHANGEDBY, CHANGED, CHANGE FROM app.fnGet' + @hist + 'History (' + CAST(@id AS NVARCHAR(500)) + ') ORDER BY DATEOFCHANGE DESC';
+	SET @sqlfinal = 'SELECT DATEOFCHANGE, CHANGEDBY, CHANGED, CHANGE FROM dbo.fnGet' + @hist + 'History (' + CAST(@id AS NVARCHAR(500)) + ') ORDER BY DATEOFCHANGE DESC';
 
 	EXECUTE sp_executesql @sqlfinal;
 

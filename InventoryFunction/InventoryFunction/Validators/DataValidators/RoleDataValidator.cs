@@ -35,7 +35,7 @@ namespace InventoryFunction.Validators.DataValidators
                 _logger.LogDebug("VerifyRole request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //RoleDto role = await connection.QueryFirstAsync<RoleDto>("[app].[spGetRole]", new { id }, commandType: CommandType.StoredProcedure);
+                //RoleDto role = await connection.QueryFirstAsync<RoleDto>("[dbo].[spGetRole]", new { id }, commandType: CommandType.StoredProcedure);
                 RoleDto role = null;
 
                 _logger.LogInformation("VerifyRole success response.");

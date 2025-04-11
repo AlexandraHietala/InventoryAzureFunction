@@ -5,7 +5,7 @@
 
 -----------------------------------------------------------
 
-USE [SEInventory]
+USE [SEInventoryDB]
 GO
 
 
@@ -17,7 +17,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spAddUser]
+CREATE OR ALTER PROCEDURE [dbo].[spAddUser]
 	@name varchar(250),
 	@salt varchar(250),
 	@hash varchar(250),
@@ -27,7 +27,7 @@ AS
 
 BEGIN TRY
 
-	INSERT INTO [app].[Users] ([NAME], [PASS_SALT], [PASS_HASH], [ROLE_ID], [LAST_MODIFIED_BY], [CREATED_BY])
+	INSERT INTO [dbo].[Users] ([NAME], [PASS_SALT], [PASS_HASH], [ROLE_ID], [LAST_MODIFIED_BY], [CREATED_BY])
 	VALUES (@name, @salt, @hash, @role, @lastmodifiedby, @lastmodifiedby);
 
     SELECT SCOPE_IDENTITY();
@@ -55,14 +55,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetAuth]
+CREATE OR ALTER PROCEDURE [dbo].[spGetAuth]
 	@id varchar(100)
 AS
 
 BEGIN TRY
 
 	SELECT [PASS_SALT], [PASS_HASH], [ROLE_ID]
-	FROM [app].[vwUsers] 
+	FROM [dbo].[vwUsers] 
 	WHERE [ID] = @id 
 
 END TRY
@@ -89,13 +89,13 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetUsers]
+CREATE OR ALTER PROCEDURE [dbo].[spGetUsers]
 AS
 
 BEGIN TRY
 
 	SELECT u.[ID], u.[NAME], u.[PASS_SALT], u.[PASS_HASH], u.[ROLE_ID], u.[CREATED_BY], u.[CREATED_DATE], u.[LAST_MODIFIED_BY], u.[LAST_MODIFIED_DATE]
-	FROM [app].[vwUsers] u
+	FROM [dbo].[vwUsers] u
 
 END TRY
 
@@ -121,14 +121,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetUser]
+CREATE OR ALTER PROCEDURE [dbo].[spGetUser]
 	@id int
 AS
 
 BEGIN TRY
 
 	SELECT TOP 1 u.[ID], u.[NAME], u.[PASS_SALT], u.[PASS_HASH], u.[ROLE_ID], u.[CREATED_BY], u.[CREATED_DATE], u.[LAST_MODIFIED_BY], u.[LAST_MODIFIED_DATE]
-	FROM [app].[vwUsers] u
+	FROM [dbo].[vwUsers] u
 	WHERE u.ID = @id
 
 END TRY
@@ -155,7 +155,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spUpdateUser]
+CREATE OR ALTER PROCEDURE [dbo].[spUpdateUser]
 	@id int,
 	@name varchar(250),
 	@salt varchar(250),
@@ -166,7 +166,7 @@ AS
 
 BEGIN TRY
 
-	UPDATE [app].[Users] 
+	UPDATE [dbo].[Users] 
 	SET [NAME] = @name, [PASS_SALT] = @salt, [PASS_HASH] = @hash, [ROLE_ID] = @role, [LAST_MODIFIED_BY] = @lastmodifiedby, [LAST_MODIFIED_DATE] = GETDATE() 
 	WHERE [ID] = @id
 
@@ -197,18 +197,18 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spRemoveUser]
+CREATE OR ALTER PROCEDURE [dbo].[spRemoveUser]
 	@id int,
 	@lastmodifiedby varchar(100)
 AS
 
 BEGIN TRY
 
-	UPDATE [app].[Users]
+	UPDATE [dbo].[Users]
 	SET [LAST_MODIFIED_BY] = @lastmodifiedby, [LAST_MODIFIED_DATE] = GETDATE()
 	WHERE [ID] = @id
 
-	DELETE FROM [app].[Users]
+	DELETE FROM [dbo].[Users]
 	WHERE [ID] = @id
 
 	SELECT @id
@@ -237,14 +237,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetRole]
+CREATE OR ALTER PROCEDURE [dbo].[spGetRole]
 	@id int
 AS
 
 BEGIN TRY
 
 	SELECT TOP 1 [ID] as [ROLE_ID], [DESCRIPTION] as [ROLE_DESCRIPTION]
-	FROM [app].[vwRoles]
+	FROM [dbo].[vwRoles]
 	WHERE ID = @id
 
 END TRY
@@ -271,13 +271,13 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetRoles]
+CREATE OR ALTER PROCEDURE [dbo].[spGetRoles]
 AS
 
 BEGIN TRY
 
 	SELECT [ID] as [ROLE_ID], [DESCRIPTION] as [ROLE_DESCRIPTION]
-	FROM [app].[vwRoles]
+	FROM [dbo].[vwRoles]
 
 END TRY
 
@@ -303,14 +303,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetSeries]
+CREATE OR ALTER PROCEDURE [dbo].[spGetSeries]
 	@search varchar(250)
 AS
 
 BEGIN TRY
 	
-	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT [ID] as [SERIES_ID], [SERIES_NAME], [DESCRIPTION] as [SERIES_DESCRIPTION], [CREATED_BY] as [SERIES_CREATED_BY], [CREATED_DATE] as [SERIES_CREATED_DATE], [LAST_MODIFIED_BY] as [SERIES_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [SERIES_LAST_MODIFIED_DATE] FROM [app].[vwSeries] WHERE ID LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR SERIES_NAME LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR DESCRIPTION LIKE '%' + LTRIM(RTRIM(@search)) + '%'
-	ELSE SELECT [ID] as [SERIES_ID], [SERIES_NAME], [DESCRIPTION] as [SERIES_DESCRIPTION], [CREATED_BY] as [SERIES_CREATED_BY], [CREATED_DATE] as [SERIES_CREATED_DATE], [LAST_MODIFIED_BY] as [SERIES_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [SERIES_LAST_MODIFIED_DATE] FROM [app].[vwSeries]
+	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT [ID] as [SERIES_ID], [SERIES_NAME], [DESCRIPTION] as [SERIES_DESCRIPTION], [CREATED_BY] as [SERIES_CREATED_BY], [CREATED_DATE] as [SERIES_CREATED_DATE], [LAST_MODIFIED_BY] as [SERIES_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [SERIES_LAST_MODIFIED_DATE] FROM [dbo].[vwSeries] WHERE ID LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR SERIES_NAME LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR DESCRIPTION LIKE '%' + LTRIM(RTRIM(@search)) + '%'
+	ELSE SELECT [ID] as [SERIES_ID], [SERIES_NAME], [DESCRIPTION] as [SERIES_DESCRIPTION], [CREATED_BY] as [SERIES_CREATED_BY], [CREATED_DATE] as [SERIES_CREATED_DATE], [LAST_MODIFIED_BY] as [SERIES_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [SERIES_LAST_MODIFIED_DATE] FROM [dbo].[vwSeries]
 
 END TRY
 
@@ -335,14 +335,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetASeries]
+CREATE OR ALTER PROCEDURE [dbo].[spGetASeries]
 	@id int
 AS
 
 BEGIN TRY
 	
 	SELECT [ID] as [SERIES_ID], [SERIES_NAME], [DESCRIPTION] as [SERIES_DESCRIPTION], [CREATED_BY] as [SERIES_CREATED_BY], [CREATED_DATE] as [SERIES_CREATED_DATE], [LAST_MODIFIED_BY] as [SERIES_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [SERIES_LAST_MODIFIED_DATE] 
-	FROM [app].[vwSeries] WHERE ID = @id
+	FROM [dbo].[vwSeries] WHERE ID = @id
 
 END TRY
 
@@ -367,7 +367,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spAddSeries]
+CREATE OR ALTER PROCEDURE [dbo].[spAddSeries]
 	@series_name varchar(250),
 	@description varchar(250),
 	@lastmodifiedby varchar(100)
@@ -375,7 +375,7 @@ AS
 
 BEGIN TRY
 	
-	INSERT INTO [app].[Series] ([SERIES_NAME],[DESCRIPTION],[LAST_MODIFIED_BY],[CREATED_BY]) 
+	INSERT INTO [dbo].[Series] ([SERIES_NAME],[DESCRIPTION],[LAST_MODIFIED_BY],[CREATED_BY]) 
 	VALUES (@series_name,@description,@lastmodifiedby,@lastmodifiedby);
 
 	SELECT SCOPE_IDENTITY();
@@ -403,7 +403,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spUpdateSeries]
+CREATE OR ALTER PROCEDURE [dbo].[spUpdateSeries]
 	@id int,
 	@series_name varchar(250),
 	@description varchar(250),
@@ -412,7 +412,7 @@ AS
 
 BEGIN TRY
 	
-	UPDATE [app].[Series] 
+	UPDATE [dbo].[Series] 
 	SET [SERIES_NAME] = @series_name, [DESCRIPTION] = @description, [LAST_MODIFIED_BY] = @lastmodifiedby, [LAST_MODIFIED_DATE] = GETDATE()
 	WHERE ID = @id
 
@@ -441,18 +441,18 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spRemoveSeries]
+CREATE OR ALTER PROCEDURE [dbo].[spRemoveSeries]
 	@id int,
 	@lastmodifiedby varchar(100)
 AS
 
 BEGIN TRY
 
-	UPDATE [app].[Series] 
+	UPDATE [dbo].[Series] 
 	SET LAST_MODIFIED_BY = @lastmodifiedby, LAST_MODIFIED_DATE = GETDATE()
 	WHERE ID = @id
 
-	DELETE FROM [app].[Series] 
+	DELETE FROM [dbo].[Series] 
 	WHERE ID = @id
 
 	SELECT @id
@@ -480,14 +480,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetBrands]
+CREATE OR ALTER PROCEDURE [dbo].[spGetBrands]
 	@search varchar(250)
 AS
 
 BEGIN TRY
 	
-	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT [ID] as [BRAND_ID], [BRAND_NAME], [DESCRIPTION] as [BRAND_DESCRIPTION], [CREATED_BY] as [BRAND_CREATED_BY], [CREATED_DATE] as [BRAND_CREATED_DATE], [LAST_MODIFIED_BY] as [BRAND_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [BRAND_LAST_MODIFIED_DATE] FROM [app].[vwBrands] WHERE ID LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR BRAND_NAME LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR DESCRIPTION LIKE '%' + LTRIM(RTRIM(@search)) + '%'
-	ELSE SELECT [ID] as [BRAND_ID], [BRAND_NAME], [DESCRIPTION] as [BRAND_DESCRIPTION], [CREATED_BY] as [BRAND_CREATED_BY], [CREATED_DATE] as [BRAND_CREATED_DATE], [LAST_MODIFIED_BY] as [BRAND_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [BRAND_LAST_MODIFIED_DATE] FROM [app].[vwBrands]
+	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT [ID] as [BRAND_ID], [BRAND_NAME], [DESCRIPTION] as [BRAND_DESCRIPTION], [CREATED_BY] as [BRAND_CREATED_BY], [CREATED_DATE] as [BRAND_CREATED_DATE], [LAST_MODIFIED_BY] as [BRAND_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [BRAND_LAST_MODIFIED_DATE] FROM [dbo].[vwBrands] WHERE ID LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR BRAND_NAME LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR DESCRIPTION LIKE '%' + LTRIM(RTRIM(@search)) + '%'
+	ELSE SELECT [ID] as [BRAND_ID], [BRAND_NAME], [DESCRIPTION] as [BRAND_DESCRIPTION], [CREATED_BY] as [BRAND_CREATED_BY], [CREATED_DATE] as [BRAND_CREATED_DATE], [LAST_MODIFIED_BY] as [BRAND_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [BRAND_LAST_MODIFIED_DATE] FROM [dbo].[vwBrands]
 
 END TRY
 
@@ -512,14 +512,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetBrand]
+CREATE OR ALTER PROCEDURE [dbo].[spGetBrand]
 	@id int
 AS
 
 BEGIN TRY
 	
 	SELECT [ID] as [BRAND_ID], [BRAND_NAME], [DESCRIPTION] as [BRAND_DESCRIPTION], [CREATED_BY] as [BRAND_CREATED_BY], [CREATED_DATE] as [BRAND_CREATED_DATE], [LAST_MODIFIED_BY] as [BRAND_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [BRAND_LAST_MODIFIED_DATE] 
-	FROM [app].[vwBrands]
+	FROM [dbo].[vwBrands]
 	WHERE ID = @id
 
 END TRY
@@ -545,7 +545,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spAddBrand]
+CREATE OR ALTER PROCEDURE [dbo].[spAddBrand]
 	@brand_name varchar(50),
 	@description varchar(250),
 	@lastmodifiedby varchar(100)
@@ -553,7 +553,7 @@ AS
 
 BEGIN TRY
 	
-	INSERT INTO [app].[Brands] ([BRAND_NAME],[DESCRIPTION],[LAST_MODIFIED_BY],[CREATED_BY]) 
+	INSERT INTO [dbo].[Brands] ([BRAND_NAME],[DESCRIPTION],[LAST_MODIFIED_BY],[CREATED_BY]) 
 	VALUES (@brand_name,@description,@lastmodifiedby,@lastmodifiedby);
 
 	SELECT SCOPE_IDENTITY();
@@ -581,7 +581,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spUpdateBrand]
+CREATE OR ALTER PROCEDURE [dbo].[spUpdateBrand]
 	@id int,
 	@brand_name varchar(50),
 	@description varchar(250),
@@ -590,7 +590,7 @@ AS
 
 BEGIN TRY
 	
-	UPDATE [app].[Brands] 
+	UPDATE [dbo].[Brands] 
 	SET [BRAND_NAME] = @brand_name, [DESCRIPTION] = @description, [LAST_MODIFIED_BY] = @lastmodifiedby, [LAST_MODIFIED_DATE] = GETDATE()
 	WHERE ID = @id
 
@@ -619,18 +619,18 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spRemoveBrand]
+CREATE OR ALTER PROCEDURE [dbo].[spRemoveBrand]
 	@id int,
 	@lastmodifiedby varchar(100)
 AS
 
 BEGIN TRY
 
-	UPDATE [app].[Brands] 
+	UPDATE [dbo].[Brands] 
 	SET LAST_MODIFIED_BY = @lastmodifiedby, LAST_MODIFIED_DATE = GETDATE()
 	WHERE ID = @id
 
-	DELETE FROM [app].[Brands] 
+	DELETE FROM [dbo].[Brands] 
 	WHERE ID = @id
 
 	SELECT @id
@@ -658,14 +658,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetCollections]
+CREATE OR ALTER PROCEDURE [dbo].[spGetCollections]
 	@search varchar(250)
 AS
 
 BEGIN TRY
 	
-	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT [ID] as [COLLECTION_ID], [COLLECTION_NAME], [DESCRIPTION] as [COLLECTION_DESCRIPTION], [CREATED_BY] as [COLLECTION_CREATED_BY], [CREATED_DATE] as [COLLECTION_CREATED_DATE], [LAST_MODIFIED_BY] as [COLLECTION_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [COLLECTION_LAST_MODIFIED_DATE] FROM [app].[vwCollections] WHERE ID LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR COLLECTION_NAME LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR DESCRIPTION LIKE '%' + LTRIM(RTRIM(@search)) + '%'
-	ELSE SELECT [ID] as [COLLECTION_ID], [COLLECTION_NAME], [DESCRIPTION] as [COLLECTION_DESCRIPTION], [CREATED_BY] as [COLLECTION_CREATED_BY], [CREATED_DATE] as [COLLECTION_CREATED_DATE], [LAST_MODIFIED_BY] as [COLLECTION_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [COLLECTION_LAST_MODIFIED_DATE] FROM [app].[vwCollections]
+	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT [ID] as [COLLECTION_ID], [COLLECTION_NAME], [DESCRIPTION] as [COLLECTION_DESCRIPTION], [CREATED_BY] as [COLLECTION_CREATED_BY], [CREATED_DATE] as [COLLECTION_CREATED_DATE], [LAST_MODIFIED_BY] as [COLLECTION_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [COLLECTION_LAST_MODIFIED_DATE] FROM [dbo].[vwCollections] WHERE ID LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR COLLECTION_NAME LIKE '%' + LTRIM(RTRIM(@search)) + '%' OR DESCRIPTION LIKE '%' + LTRIM(RTRIM(@search)) + '%'
+	ELSE SELECT [ID] as [COLLECTION_ID], [COLLECTION_NAME], [DESCRIPTION] as [COLLECTION_DESCRIPTION], [CREATED_BY] as [COLLECTION_CREATED_BY], [CREATED_DATE] as [COLLECTION_CREATED_DATE], [LAST_MODIFIED_BY] as [COLLECTION_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [COLLECTION_LAST_MODIFIED_DATE] FROM [dbo].[vwCollections]
 
 END TRY
 
@@ -690,14 +690,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetCollection]
+CREATE OR ALTER PROCEDURE [dbo].[spGetCollection]
 	@id int
 AS
 
 BEGIN TRY
 	
 	SELECT [ID] as [COLLECTION_ID], [COLLECTION_NAME], [DESCRIPTION] as [COLLECTION_DESCRIPTION], [CREATED_BY] as [COLLECTION_CREATED_BY], [CREATED_DATE] as [COLLECTION_CREATED_DATE], [LAST_MODIFIED_BY] as [COLLECTION_LAST_MODIFIED_BY], [LAST_MODIFIED_DATE] as [COLLECTION_LAST_MODIFIED_DATE] 
-	FROM [app].[vwCollections]
+	FROM [dbo].[vwCollections]
 	WHERE ID = @id
 
 END TRY
@@ -723,7 +723,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spAddCollection]
+CREATE OR ALTER PROCEDURE [dbo].[spAddCollection]
 	@collection_name varchar(50),
 	@description varchar(250),
 	@lastmodifiedby varchar(100)
@@ -731,7 +731,7 @@ AS
 
 BEGIN TRY
 	
-	INSERT INTO [app].[Collections] ([COLLECTION_NAME],[DESCRIPTION],[LAST_MODIFIED_BY],[CREATED_BY]) 
+	INSERT INTO [dbo].[Collections] ([COLLECTION_NAME],[DESCRIPTION],[LAST_MODIFIED_BY],[CREATED_BY]) 
 	VALUES (@collection_name,@description,@lastmodifiedby,@lastmodifiedby);
 
 	SELECT SCOPE_IDENTITY();
@@ -759,7 +759,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spUpdateCollection]
+CREATE OR ALTER PROCEDURE [dbo].[spUpdateCollection]
 	@id int,
 	@collection_name varchar(50),
 	@description varchar(250),
@@ -768,7 +768,7 @@ AS
 
 BEGIN TRY
 	
-	UPDATE [app].[Collections] 
+	UPDATE [dbo].[Collections] 
 	SET [COLLECTION_NAME] = @collection_name, [DESCRIPTION] = @description, [LAST_MODIFIED_BY] = @lastmodifiedby, [LAST_MODIFIED_DATE] = GETDATE()
 	WHERE ID = @id
 
@@ -797,18 +797,18 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spRemoveCollection]
+CREATE OR ALTER PROCEDURE [dbo].[spRemoveCollection]
 	@id int,
 	@lastmodifiedby varchar(100)
 AS
 
 BEGIN TRY
 
-	UPDATE [app].[Collections] 
+	UPDATE [dbo].[Collections] 
 	SET LAST_MODIFIED_BY = @lastmodifiedby, LAST_MODIFIED_DATE = GETDATE()
 	WHERE ID = @id
 
-	DELETE FROM [app].[Collections] 
+	DELETE FROM [dbo].[Collections] 
 	WHERE ID = @id
 
 	SELECT @id
@@ -836,7 +836,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spAddItemComment]
+CREATE OR ALTER PROCEDURE [dbo].[spAddItemComment]
 	@item_id int,
 	@comment varchar(max),
 	@lastmodifiedby varchar(100)
@@ -844,7 +844,7 @@ AS
 
 BEGIN TRY
 
-	INSERT INTO [app].[ItemComments] (ITEM_ID, COMMENT, CREATED_BY, LAST_MODIFIED_BY)
+	INSERT INTO [dbo].[ItemComments] (ITEM_ID, COMMENT, CREATED_BY, LAST_MODIFIED_BY)
 	VALUES (@item_id, @comment, @lastmodifiedby, @lastmodifiedby);
 
 	SELECT SCOPE_IDENTITY();
@@ -873,18 +873,18 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spRemoveItemComment]
+CREATE OR ALTER PROCEDURE [dbo].[spRemoveItemComment]
 	@id int,
 	@lastmodifiedby varchar(100)
 AS
 
 BEGIN TRY
 
-	UPDATE [app].[ItemComments]
+	UPDATE [dbo].[ItemComments]
 	SET LAST_MODIFIED_BY = @lastmodifiedby, LAST_MODIFIED_DATE = GETDATE()
 	WHERE ID = @id
 
-	DELETE FROM [app].[ItemComments]
+	DELETE FROM [dbo].[ItemComments]
 	WHERE ID = @id
 
 	SELECT @id
@@ -913,14 +913,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetItemComments]
+CREATE OR ALTER PROCEDURE [dbo].[spGetItemComments]
 	@item_id int
 AS
 
 BEGIN TRY
 
 	SELECT ID as [COMMENT_ID], ITEM_ID, COMMENT, CREATED_BY as [COMMENT_CREATED_BY], CREATED_DATE as [COMMENT_CREATED_DATE]
-	FROM [app].[vwItemComments]
+	FROM [dbo].[vwItemComments]
 	WHERE ITEM_ID = @item_id
 	ORDER BY ID DESC
 
@@ -948,7 +948,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spUpdateItemComment]
+CREATE OR ALTER PROCEDURE [dbo].[spUpdateItemComment]
 	@id int,
 	@item_id int,
 	@comment varchar(max),
@@ -957,7 +957,7 @@ AS
 
 BEGIN TRY
 
-	UPDATE [app].[ItemComments]
+	UPDATE [dbo].[ItemComments]
 	SET	
 		COMMENT = @comment,
 		LAST_MODIFIED_BY = @lastmodifiedby,
@@ -990,14 +990,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetItemComment]
+CREATE OR ALTER PROCEDURE [dbo].[spGetItemComment]
 	@id int
 AS
 
 BEGIN TRY
 
 	SELECT ID as [COMMENT_ID], ITEM_ID, COMMENT, CREATED_BY as [COMMENT_CREATED_BY], CREATED_DATE as [COMMENT_CREATED_DATE]
-	FROM [app].[vwItemComments]
+	FROM [dbo].[vwItemComments]
 	WHERE ID = @id
 	ORDER BY ID DESC
 
@@ -1025,7 +1025,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spAddItem]
+CREATE OR ALTER PROCEDURE [dbo].[spAddItem]
 	@collection_id int,
 	@status varchar(10),
 	@type varchar(15),
@@ -1042,7 +1042,7 @@ AS
 
 BEGIN TRY
 
-	INSERT INTO [app].[Items] ([COLLECTION_ID],[STATUS],[TYPE],[BRAND_ID],[SERIES_ID],[NAME],[DESCRIPTION],[FORMAT],[SIZE],[YEAR],[PHOTO],[CREATED_BY],[LAST_MODIFIED_BY])
+	INSERT INTO [dbo].[Items] ([COLLECTION_ID],[STATUS],[TYPE],[BRAND_ID],[SERIES_ID],[NAME],[DESCRIPTION],[FORMAT],[SIZE],[YEAR],[PHOTO],[CREATED_BY],[LAST_MODIFIED_BY])
 	VALUES (@collection_id,@status,@type,@brand_id,@series_id,@name,@description,@format,@size,@year,@photo,@lastmodifiedby,@lastmodifiedby)
 
 	SELECT SCOPE_IDENTITY();
@@ -1071,7 +1071,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spRemoveItem]
+CREATE OR ALTER PROCEDURE [dbo].[spRemoveItem]
 	@id int,
 	@lastmodifiedby varchar(100)
 AS
@@ -1079,16 +1079,16 @@ AS
 BEGIN TRY
 	DECLARE @countComments int;
 
-	SET @countComments = (SELECT COUNT(*) FROM [app].[ItemComments] WHERE ITEM_ID = @id);
+	SET @countComments = (SELECT COUNT(*) FROM [dbo].[ItemComments] WHERE ITEM_ID = @id);
 
-	IF (@countComments > 0) UPDATE [app].[ItemComments] SET LAST_MODIFIED_BY = @lastmodifiedby, LAST_MODIFIED_DATE = GETDATE() WHERE ITEM_ID = @id;
-	IF (@countComments > 0) DELETE FROM [app].[ItemComments] WHERE ITEM_ID = @id;
+	IF (@countComments > 0) UPDATE [dbo].[ItemComments] SET LAST_MODIFIED_BY = @lastmodifiedby, LAST_MODIFIED_DATE = GETDATE() WHERE ITEM_ID = @id;
+	IF (@countComments > 0) DELETE FROM [dbo].[ItemComments] WHERE ITEM_ID = @id;
 
-	UPDATE [app].[Items]
+	UPDATE [dbo].[Items]
 	SET LAST_MODIFIED_BY = @lastmodifiedby, LAST_MODIFIED_DATE = GETDATE()
 	WHERE ID = @id;	
 
-	DELETE FROM [app].[Items]
+	DELETE FROM [dbo].[Items]
 	WHERE ID = @id;	
 
 	SELECT @id
@@ -1117,7 +1117,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetItem]
+CREATE OR ALTER PROCEDURE [dbo].[spGetItem]
 	@id int
 AS
 
@@ -1125,7 +1125,7 @@ BEGIN TRY
 	
 	SELECT 
 		item.*
-	FROM [app].vwItems item	
+	FROM [dbo].vwItems item	
 	WHERE ID = @id
 
 END TRY
@@ -1151,7 +1151,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spUpdateItem]
+CREATE OR ALTER PROCEDURE [dbo].[spUpdateItem]
 	@id int,
 	@collection_id int,
 	@status varchar(10),
@@ -1169,7 +1169,7 @@ AS
 
 BEGIN TRY
 
-	UPDATE [app].[Items]
+	UPDATE [dbo].[Items]
 	SET	
 		COLLECTION_ID = @collection_id,
 		STATUS = @status,
@@ -1212,7 +1212,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spSearchItems]
+CREATE OR ALTER PROCEDURE [dbo].[spSearchItems]
 	@startingindex int,
 	@endingindex int,
 	@orderby varchar(50),
@@ -1242,8 +1242,8 @@ BEGIN TRY
 	DECLARE @rowclause nvarchar(1000);
 	DECLARE @stringstart varchar(5);
 
-	SET @sqlbasecommand1 = ';WITH CTE AS (SELECT RowNumber = ROW_NUMBER() OVER (ORDER by ' + @orderby + ' ' + @order + '), * FROM [app].[vwItems_Search]';
-	SET @sqlbasecommand2 = 'SELECT COUNT(*) as Results FROM [app].[vwItems_Search]';
+	SET @sqlbasecommand1 = ';WITH CTE AS (SELECT RowNumber = ROW_NUMBER() OVER (ORDER by ' + @orderby + ' ' + @order + '), * FROM [dbo].[vwItems_Search]';
+	SET @sqlbasecommand2 = 'SELECT COUNT(*) as Results FROM [dbo].[vwItems_Search]';
 	SET @sqlwhereclause = 
 	(CASE WHEN @id IS NOT NULL THEN ' AND [ID] = ' + CAST(@id as varchar(50)) ELSE '' END)
 	+ (CASE WHEN @collection_id IS NOT NULL THEN ' AND [COLLECTION_ID] = ' + CAST(@collection_id as varchar(50)) ELSE '' END)
@@ -1296,14 +1296,14 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetItems]
+CREATE OR ALTER PROCEDURE [dbo].[spGetItems]
 	@search varchar(250)
 AS
 
 BEGIN TRY
 
-	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT * FROM [app].[vwItems_Search] WHERE FULLDATA LIKE '%' + LTRIM(RTRIM(@search)) + '%'
-	ELSE SELECT * FROM [app].[vwItems]
+	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT * FROM [dbo].[vwItems_Search] WHERE FULLDATA LIKE '%' + LTRIM(RTRIM(@search)) + '%'
+	ELSE SELECT * FROM [dbo].[vwItems]
 
 END TRY
 
@@ -1328,7 +1328,7 @@ GO
 
 -----------------------------------------------------------
 
-CREATE OR ALTER PROCEDURE [app].[spGetItemsPerCollection]
+CREATE OR ALTER PROCEDURE [dbo].[spGetItemsPerCollection]
 	@collection_id int,
 	@search varchar(250)
 	
@@ -1336,8 +1336,8 @@ AS
 
 BEGIN TRY
 
-	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT * FROM [app].[vwItems_Search] WHERE COLLECTION_ID = @collection_id AND FULLDATA LIKE '%' + LTRIM(RTRIM(@search)) + '%'
-	ELSE SELECT * FROM [app].[vwItems] WHERE COLLECTION_ID = @collection_id
+	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT * FROM [dbo].[vwItems_Search] WHERE COLLECTION_ID = @collection_id AND FULLDATA LIKE '%' + LTRIM(RTRIM(@search)) + '%'
+	ELSE SELECT * FROM [dbo].[vwItems] WHERE COLLECTION_ID = @collection_id
 
 END TRY
 

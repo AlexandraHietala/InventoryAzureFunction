@@ -18,13 +18,25 @@ namespace InventoryFunction.Data
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _connString;
+        private readonly string _dataSource;
+        private readonly string _userId;
+        private readonly string _userPass;
+        private readonly string _initialCatalog;
+        private readonly SqlConnectionStringBuilder builder;
 
         public AddCollectionOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<AddCollectionOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
+            _dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+            _userId = _configuration.GetConnectionString("SEInventoryUserId");
+            _userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+            _initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+            builder = new SqlConnectionStringBuilder();
+            builder.DataSource = _dataSource;
+            builder.UserID = _userId;
+            builder.Password = _userPass;
+            builder.InitialCatalog = _initialCatalog;
         }
 
         public async Task<int> AddCollection(CollectionDto collection)
@@ -34,7 +46,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("AddCollection request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //int id = await connection.QueryFirstAsync<int>("[app].[spAddCollection]", new { collection_name = collection.COLLECTION_NAME, description = collection.COLLECTION_DESCRIPTION, lastmodifiedby = collection.COLLECTION_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
+                //int id = await connection.QueryFirstAsync<int>("[dbo].[spAddCollection]", new { collection_name = collection.COLLECTION_NAME, description = collection.COLLECTION_DESCRIPTION, lastmodifiedby = collection.COLLECTION_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
                 int id = 1;
 
                 _logger.LogInformation("AddCollection success response.");

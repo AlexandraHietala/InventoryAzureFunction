@@ -34,7 +34,7 @@ namespace InventoryFunction.Validators.DataValidators
                 _logger.LogDebug("VerifyUser request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //UserDto user = await connection.QueryFirstAsync<UserDto>("[app].[spGetUser]", new { id }, commandType: CommandType.StoredProcedure);
+                //UserDto user = await connection.QueryFirstAsync<UserDto>("[dbo].[spGetUser]", new { id }, commandType: CommandType.StoredProcedure);
                 UserDto user = null;
 
                 _logger.LogInformation("VerifyUser success response.");

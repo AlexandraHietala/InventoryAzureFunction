@@ -20,16 +20,28 @@ namespace InventoryFunction.Data
 
     public class GetItemCommentOperations : IGetItemCommentOperations
     {
-        private readonly ILogger _logger;
-        private readonly IConfiguration _configuration;
-        private readonly string _connString;
+		private readonly ILogger _logger;
+		private readonly IConfiguration _configuration;
+		private readonly string _dataSource;
+		private readonly string _userId;
+		private readonly string _userPass;
+		private readonly string _initialCatalog;
+		private readonly SqlConnectionStringBuilder builder;
 
-        public GetItemCommentOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
+		public GetItemCommentOperations(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<GetItemCommentOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
-        }
+			_dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+			_userId = _configuration.GetConnectionString("SEInventoryUserId");
+			_userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+			_initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+			builder = new SqlConnectionStringBuilder();
+			builder.DataSource = _dataSource;
+			builder.UserID = _userId;
+			builder.Password = _userPass;
+			builder.InitialCatalog = _initialCatalog;
+		}
 
         public async Task<ItemCommentDto> GetItemComment(int id)
         {
@@ -38,7 +50,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetItemComment request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //ItemCommentDto comment = await connection.QueryFirstAsync<ItemCommentDto>("[app].[spGetItemComment]", new { id = id }, commandType: CommandType.StoredProcedure);
+                //ItemCommentDto comment = await connection.QueryFirstAsync<ItemCommentDto>("[dbo].[spGetItemComment]", new { id = id }, commandType: CommandType.StoredProcedure);
                 ItemCommentDto comment = new ItemCommentDto();
 
                 _logger.LogInformation("GetItemComment success response.");
@@ -71,7 +83,7 @@ namespace InventoryFunction.Data
                 _logger.LogDebug("GetItemComments request received.");
 
                 //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<ItemCommentDto> comments = await connection.QueryAsync<ItemCommentDto>("[app].[spGetItemComments]", new { item_id = itemId }, commandType: CommandType.StoredProcedure);
+                //IEnumerable<ItemCommentDto> comments = await connection.QueryAsync<ItemCommentDto>("[dbo].[spGetItemComments]", new { item_id = itemId }, commandType: CommandType.StoredProcedure);
                 List<ItemCommentDto> comments = new List<ItemCommentDto>();
 
                 _logger.LogInformation("GetItemComments success response.");
