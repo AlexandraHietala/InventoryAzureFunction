@@ -6,6 +6,8 @@ using System.Data;
 using InventoryFunction.Models.DTOs;
 using System.Threading.Tasks;
 using System;
+using System.Drawing;
+using System.Linq;
 
 namespace InventoryFunction.Data
 {
@@ -44,10 +46,32 @@ namespace InventoryFunction.Data
             try
             {
                 _logger.LogDebug("AddItem request received.");
+				int id = 0;
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //int id = await connection.QueryFirstAsync<int>("[dbo].[spAddItem]", new { collection_id = item.COLLECTION_ID, status = item.STATUS, type = item.TYPE, brand_id = item.BRAND_ID, series_id = item.SERIES_ID, name = item.NAME, description = item.DESCRIPTION, format = item.FORMAT, size = item.SIZE, year = item.YEAR, photo = item.PHOTO, lastmodifiedby = item.LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
-                int id = 1;
+				using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+				{
+					if (connection.State == ConnectionState.Closed)
+					{
+						connection.Open();
+					}
+
+					id = connection.Query<int>("dbo.spAddItem", new
+					{
+						collection_id = item.COLLECTION_ID,
+						status = item.STATUS,
+						type = item.TYPE,
+						brand_id = item.BRAND_ID,
+						series_id = item.SERIES_ID,
+						name = item.NAME,
+						description = item.DESCRIPTION,
+						format = item.FORMAT,
+						size = item.SIZE,
+						year = item.YEAR,
+						photo = item.PHOTO,
+						lastmodifiedby = item.LAST_MODIFIED_BY
+					},
+						commandType: CommandType.StoredProcedure).FirstOrDefault();
+				}
 
                 _logger.LogInformation("AddItem success response.");
                 return id;

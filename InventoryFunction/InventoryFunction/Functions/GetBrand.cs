@@ -11,6 +11,8 @@ using InventoryFunction.Models.Classes;
 using InventoryFunction.Validators.LightValidators;
 using InventoryFunction.Workflows;
 using System.Collections.Generic;
+using Microsoft.Azure.Functions.Worker.Extensions;
+
 
 namespace InventoryFunction.Functions
 {
@@ -30,14 +32,14 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetBrand")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrand/{id}")] HttpRequestData req)
         {
             _logger.LogDebug("GetBrand request received.");
 
             try
             {
                 // Validate
-                var id = JsonConvert.DeserializeObject<int>(await new StreamReader(req.Body).ReadToEndAsync());
+                int id = Convert.ToInt32(req.Query["id"]);
 
                 var failures = _lightValidator.ValidateBrandId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);

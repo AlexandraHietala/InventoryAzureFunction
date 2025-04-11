@@ -94,9 +94,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetBrands request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<BrandDto> brands = await connection.QueryAsync<BrandDto>("[dbo].[spGetBrands]", new { search = search }, commandType: CommandType.StoredProcedure);
-                List<BrandDto> brands = new List<BrandDto>();
+				List<BrandDto> brands = new List<BrandDto>();
+
+				using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+				{
+					if (connection.State == ConnectionState.Closed)
+					{
+						connection.Open();
+					}
+
+					brands = connection.Query<BrandDto>("dbo.spGetBrand", new
+					{
+						search = search
+					},
+					commandType: CommandType.StoredProcedure).ToList();
+				}
 
                 _logger.LogInformation("GetBrands success response.");
                 return brands.ToList();
