@@ -23,7 +23,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<RemoveUserOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenUser")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task RemoveUser(int id, string lastmodifiedby)

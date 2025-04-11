@@ -25,7 +25,7 @@ namespace InventoryFunction.Validators.DataValidators
         {
             _logger = loggerFactory.CreateLogger<RoleDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenUser")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task<bool> VerifyRole(int id)

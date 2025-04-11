@@ -24,7 +24,7 @@ namespace InventoryFunction.Validators.DataValidators
         {
             _logger = loggerFactory.CreateLogger<ItemCommentDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenItem");
+            //_connString = _configuration.GetConnectionString("SEInventory");
         }
 
         public async Task<bool> VerifyItemComment(int id)

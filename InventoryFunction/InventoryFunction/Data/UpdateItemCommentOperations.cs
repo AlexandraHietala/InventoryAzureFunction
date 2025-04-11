@@ -24,7 +24,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<UpdateItemCommentOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenItem")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task UpdateItemComment(ItemCommentDto comment)

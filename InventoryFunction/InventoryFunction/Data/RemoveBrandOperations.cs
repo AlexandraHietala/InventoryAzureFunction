@@ -23,7 +23,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<RemoveBrandOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenBrand")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task RemoveBrand(int id, string lastmodifiedby)

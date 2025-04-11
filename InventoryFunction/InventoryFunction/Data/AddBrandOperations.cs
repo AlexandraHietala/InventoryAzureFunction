@@ -24,7 +24,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<AddBrandOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenBrand")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task<int> AddBrand(BrandDto brand)

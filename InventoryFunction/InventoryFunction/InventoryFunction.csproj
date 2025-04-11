@@ -24,6 +24,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="DatabaseSetupQueries\" />
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>

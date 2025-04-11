@@ -24,7 +24,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<AddCollectionOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenCollection")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task<int> AddCollection(CollectionDto collection)

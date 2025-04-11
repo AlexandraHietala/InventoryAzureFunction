@@ -28,7 +28,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<GetSeriesOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenSeries")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task<SeriesDto> GetASeries(int id)

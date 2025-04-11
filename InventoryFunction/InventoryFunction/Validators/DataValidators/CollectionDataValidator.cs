@@ -24,7 +24,7 @@ namespace InventoryFunction.Validators.DataValidators
         {
             _logger = loggerFactory.CreateLogger<CollectionDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenCollection");
+            //_connString = _configuration.GetConnectionString("SEInventory");
         }
 
         public async Task<bool> VerifyCollection(int id)

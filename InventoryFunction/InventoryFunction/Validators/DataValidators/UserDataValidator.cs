@@ -24,7 +24,7 @@ namespace InventoryFunction.Validators.DataValidators
         {
             _logger = loggerFactory.CreateLogger<UserDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenUser")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task<bool> VerifyUser(int id)

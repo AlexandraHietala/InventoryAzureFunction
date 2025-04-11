@@ -27,7 +27,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<GetRoleOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenUser")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task<RoleDto> GetRole(int id)

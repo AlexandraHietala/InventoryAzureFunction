@@ -27,7 +27,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<GetUserOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenUser")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task<UserDto> GetUser(int id)

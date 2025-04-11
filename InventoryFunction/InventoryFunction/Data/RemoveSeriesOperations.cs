@@ -23,7 +23,7 @@ namespace InventoryFunction.Data
         {
             _logger = loggerFactory.CreateLogger<RemoveSeriesOperations>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenSeries")!;
+            //_connString = _configuration.GetConnectionString("SEInventory")!;
         }
 
         public async Task RemoveSeries(int id, string lastmodifiedby)

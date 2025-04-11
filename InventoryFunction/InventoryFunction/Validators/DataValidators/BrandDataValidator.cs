@@ -24,7 +24,7 @@ namespace InventoryFunction.Validators.DataValidators
         {
             _logger = loggerFactory.CreateLogger<BrandDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("StarryEdenBrand");
+            //_connString = _configuration.GetConnectionString("SEInventory");
         }
 
         public async Task<bool> VerifyBrand(int id)
