@@ -48,9 +48,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetUser request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //UserDto user = await connection.QueryFirstAsync<UserDto>("[dbo].[spGetUser]", new { id }, commandType: CommandType.StoredProcedure);
                 UserDto user = new UserDto();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    user = connection.Query<UserDto>("dbo.spGetUser", new
+                    {
+                        id = id
+                    },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("GetUser success response.");
                 return user;
@@ -81,9 +93,17 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetUsers request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<UserDto> users = await connection.QueryAsync<UserDto>("[dbo].[spGetUsers]", new { }, commandType: CommandType.StoredProcedure);
                 List<UserDto> users = new List<UserDto>();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    users = connection.Query<UserDto>("dbo.spGetUsers", null, commandType: CommandType.StoredProcedure).ToList();
+                }
 
                 _logger.LogInformation("GetUsers success response.");
                 return users.ToList();

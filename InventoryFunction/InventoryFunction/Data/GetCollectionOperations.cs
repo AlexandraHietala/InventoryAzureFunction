@@ -61,7 +61,7 @@ namespace InventoryFunction.Data
                     {
                         id = id
                     },
-                    commandType: CommandType.StoredProcedure).FirstOrDefault(); //TODO: finish converting to this format
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
                 }
 
                 _logger.LogInformation("GetCollection success response.");

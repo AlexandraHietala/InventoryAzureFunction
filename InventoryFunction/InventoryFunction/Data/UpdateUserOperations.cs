@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using System.Linq;
 
 namespace InventoryFunction.Data
 {
@@ -45,8 +46,24 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("UpdateUser request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[dbo].[spUpdateUser]", new { id = user.ID, name = user.NAME, salt = user.PASS_SALT, hash = user.PASS_HASH, role = user.ROLE_ID, lastmodifiedby = user.LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    connection.Query<int>("dbo.spUpdateUser", new
+                    {
+                        id = user.ID,
+                        name = user.NAME,
+                        salt = user.PASS_SALT,
+                        hash = user.PASS_HASH,
+                        role = user.ROLE_ID,
+                        lastmodifiedby = user.LAST_MODIFIED_BY
+                    },
+                        commandType: CommandType.StoredProcedure);
+                }
 
                 _logger.LogInformation("UpdateUser success response.");
                 return;

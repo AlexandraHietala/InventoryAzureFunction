@@ -50,9 +50,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetItem request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //ItemDto item = await connection.QueryFirstAsync<ItemDto>("[dbo].[spGetItem]", new { id = id }, commandType: CommandType.StoredProcedure);
                 ItemDto item = new ItemDto();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    item = connection.Query<ItemDto>("dbo.spGetItem", new
+                    {
+                        id = id
+                    },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("GetItem success response.");
                 return item;
@@ -83,9 +95,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetItems request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<ItemDto> items = await connection.QueryAsync<ItemDto>("[dbo].[spGetItems]", new { search = search }, commandType: CommandType.StoredProcedure);
                 List<ItemDto> items = new List<ItemDto>();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    items = connection.Query<ItemDto>("dbo.spGetItems", new
+                    {
+                        search = search
+                    },
+                    commandType: CommandType.StoredProcedure).ToList();
+                }
 
                 _logger.LogInformation("GetItems success response.");
                 return items.ToList();
@@ -117,9 +141,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetItemsPerCollection request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<ItemDto> items = await connection.QueryAsync<ItemDto>("[dbo].[spGetItemsPerCollection]", new { collection_id = collectionId }, commandType: CommandType.StoredProcedure);
                 List<ItemDto> items = new List<ItemDto>();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    items = connection.Query<ItemDto>("dbo.spGetItemsPerCollection", new
+                    {
+                        collection_id = collectionId
+                    },
+                    commandType: CommandType.StoredProcedure).ToList();
+                }
 
                 _logger.LogInformation("GetItemsPerCollection success response.");
                 return items.ToList();

@@ -49,9 +49,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetItemComment request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //ItemCommentDto comment = await connection.QueryFirstAsync<ItemCommentDto>("[dbo].[spGetItemComment]", new { id = id }, commandType: CommandType.StoredProcedure);
                 ItemCommentDto comment = new ItemCommentDto();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    comment = connection.Query<ItemCommentDto>("dbo.spGetItemComment", new
+                    {
+                        id = id
+                    },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("GetItemComment success response.");
                 return comment;
@@ -82,9 +94,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetItemComments request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<ItemCommentDto> comments = await connection.QueryAsync<ItemCommentDto>("[dbo].[spGetItemComments]", new { item_id = itemId }, commandType: CommandType.StoredProcedure);
                 List<ItemCommentDto> comments = new List<ItemCommentDto>();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    comments = connection.Query<ItemCommentDto>("dbo.spGetItemComments", new
+                    {
+                        item_id = itemId
+                    },
+                    commandType: CommandType.StoredProcedure).ToList();
+                }
 
                 _logger.LogInformation("GetItemComments success response.");
                 return comments.ToList();

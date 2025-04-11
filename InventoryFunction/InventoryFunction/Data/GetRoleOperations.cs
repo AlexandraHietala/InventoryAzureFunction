@@ -48,9 +48,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetRole request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //RoleDto role = await connection.QueryFirstAsync<RoleDto>("[dbo].[spGetRole]", new { id }, commandType: CommandType.StoredProcedure);
                 RoleDto role = new RoleDto();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    role = connection.Query<RoleDto>("dbo.spGetRole", new
+                    {
+                        id = id
+                    },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("GetRole success response.");
                 return role;
@@ -82,9 +94,17 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetRoles request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<RoleDto> roles = await connection.QueryAsync<RoleDto>("[dbo].[spGetRoles]", new { }, commandType: CommandType.StoredProcedure);
                 List<RoleDto> roles = new List<RoleDto>();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    roles = connection.Query<RoleDto>("dbo.spGetRoles", null, commandType: CommandType.StoredProcedure).ToList();
+                }
 
                 _logger.LogInformation("GetRoles success response.");
                 return roles.ToList();

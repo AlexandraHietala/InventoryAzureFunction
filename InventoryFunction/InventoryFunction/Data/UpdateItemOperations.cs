@@ -45,8 +45,31 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("UpdateItem request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[dbo].[spUpdateItem]", new { id = item.ID, collection_id = item.COLLECTION_ID, status = item.STATUS, type = item.TYPE, brand_id = item.BRAND_ID, series_id = item.SERIES_ID, name = item.NAME, description = item.DESCRIPTION, format = item.FORMAT, size = item.SIZE, year = item.YEAR, photo = item.PHOTO, lastmodifiedby = item.LAST_MODIFIED_BY  }, commandType: CommandType.StoredProcedure);
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    connection.Execute("dbo.spUpdateItem", new
+                    {
+                        id = item.ID,
+                        collection_id = item.COLLECTION_ID,
+                        status = item.STATUS,
+                        type = item.TYPE,
+                        brand_id = item.BRAND_ID,
+                        series_id = item.SERIES_ID,
+                        name = item.NAME,
+                        description = item.DESCRIPTION,
+                        format = item.FORMAT,
+                        size = item.SIZE,
+                        year = item.YEAR,
+                        photo = item.PHOTO,
+                        lastmodifiedby = item.LAST_MODIFIED_BY
+                    },
+                        commandType: CommandType.StoredProcedure);
+                }
 
                 _logger.LogInformation("UpdateItem success response.");
                 return;

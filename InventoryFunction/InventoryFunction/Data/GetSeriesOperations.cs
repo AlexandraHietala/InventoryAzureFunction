@@ -49,9 +49,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetASeries request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //SeriesDto series = await connection.QueryFirstAsync<SeriesDto>("[dbo].[spGetASeries]", new { id = id }, commandType: CommandType.StoredProcedure);
                 SeriesDto series = new SeriesDto();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    series = connection.Query<SeriesDto>("dbo.spGetASeries", new
+                    {
+                        id = id
+                    },
+                    commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("GetASeries success response.");
                 return series;
@@ -82,9 +94,21 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("GetSeries request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //IEnumerable<SeriesDto> series = await connection.QueryAsync<SeriesDto>("[dbo].[spGetSeries]", new { search = search }, commandType: CommandType.StoredProcedure);
                 List<SeriesDto> series = new List<SeriesDto>();
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    series = connection.Query<SeriesDto>("dbo.spGetSeries", new
+                    {
+                        search = search
+                    },
+                    commandType: CommandType.StoredProcedure).ToList();
+                }
 
                 _logger.LogInformation("GetSeries success response.");
                 return series.ToList();

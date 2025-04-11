@@ -44,8 +44,19 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("RemoveItemComment request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[dbo].[spRemoveItemComment]", new { id = id, lastmodifiedby = lastmodifiedby }, commandType: CommandType.StoredProcedure);
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    connection.Execute("dbo.spRemoveItemComment", new
+                    {
+                        id = id
+                    },
+                        commandType: CommandType.StoredProcedure);
+                }
 
                 _logger.LogInformation("RemoveItemComment success response.");
                 return;

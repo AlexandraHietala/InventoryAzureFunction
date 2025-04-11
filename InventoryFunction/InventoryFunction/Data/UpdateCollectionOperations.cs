@@ -45,8 +45,22 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("UpdateCollection request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[dbo].[spUpdateCollection]", new { id = collection.COLLECTION_ID, collection_name = collection.COLLECTION_NAME, description = collection.COLLECTION_DESCRIPTION, lastmodifiedby = collection.COLLECTION_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    connection.Execute("dbo.spUpdateCollection", new
+                    {
+                        id = collection.COLLECTION_ID,
+                        collection_name = collection.COLLECTION_NAME,
+                        description = collection.COLLECTION_DESCRIPTION,
+                        lastmodifiedby = collection.COLLECTION_LAST_MODIFIED_BY
+                    },
+                        commandType: CommandType.StoredProcedure);
+                }
 
                 _logger.LogInformation("UpdateCollection success response.");
                 return;

@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using System.Linq;
 
 namespace InventoryFunction.Data
 {
@@ -45,9 +46,23 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("UpdateBrand request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[dbo].[spUpdateBrand]", new { id = brand.BRAND_ID, brand_name = brand.BRAND_NAME, description = brand.BRAND_DESCRIPTION, lastmodifiedby = brand.BRAND_LAST_MODIFIED_BY }, commandType: CommandType.StoredProcedure);
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
 
+                    connection.Execute("dbo.spUpdateBrand", new
+                    {
+                        id = brand.BRAND_ID,
+                        brand_name = brand.BRAND_NAME,
+                        description = brand.BRAND_DESCRIPTION,
+                        lastmodifiedby = brand.BRAND_LAST_MODIFIED_BY
+                    },
+                        commandType: CommandType.StoredProcedure);
+                }
+                
                 _logger.LogInformation("UpdateBrand success response.");
                 return;
             }

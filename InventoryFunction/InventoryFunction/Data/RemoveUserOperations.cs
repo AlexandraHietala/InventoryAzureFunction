@@ -44,9 +44,20 @@ namespace InventoryFunction.Data
             {
                 _logger.LogDebug("RemoveUser request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //await connection.QueryFirstAsync<bool>("[dbo].[spRemoveUser]", new { id, lastmodifiedby }, commandType: CommandType.StoredProcedure);
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
 
+                    connection.Execute("dbo.spRemoveUser", new
+                    {
+                        id = id
+                    },
+                        commandType: CommandType.StoredProcedure);
+                }
+               
                 _logger.LogInformation("RemoveUser success response.");
                 return;
             }
