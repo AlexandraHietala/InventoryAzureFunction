@@ -40,7 +40,8 @@ namespace InventoryFunction.Functions
             try
             {
                 // Validate
-                int id = Convert.ToInt32(req.Query["id"]);
+                string param = req.Query["id"].ToString().Trim(); 
+                int id = Convert.ToInt32(param);
 
                 var failures = _lightValidator.ValidateBrandId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
