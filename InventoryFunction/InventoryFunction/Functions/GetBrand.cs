@@ -52,7 +52,7 @@ namespace InventoryFunction.Functions
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(brand.ToString());
+                response.WriteString(JsonConvert.SerializeObject(brand));
                 return response;
             }
             catch (ArgumentException ae)
