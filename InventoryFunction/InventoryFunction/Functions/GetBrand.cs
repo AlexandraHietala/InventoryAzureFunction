@@ -40,8 +40,13 @@ namespace InventoryFunction.Functions
             try
             {
                 // Validate
-                string param = req.Query["id"].ToString().Trim(); 
+                string param = req.Query["id"]?.ToString(); // TODO: Why you no work>!?
                 int id = Convert.ToInt32(param);
+
+                var response = req.CreateResponse(HttpStatusCode.BadRequest);
+                response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+                response.WriteString($"{param}");
+                return response;
 
                 var failures = _lightValidator.ValidateBrandId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
@@ -52,10 +57,10 @@ namespace InventoryFunction.Functions
                 // Respond
                 _logger.LogInformation("GetBrand success response.");
 
-                var response = req.CreateResponse(HttpStatusCode.OK);
-                response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(JsonConvert.SerializeObject(brand));
-                return response;
+                //var response = req.CreateResponse(HttpStatusCode.OK);
+                //response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+                //response.WriteString(JsonConvert.SerializeObject(brand));
+                //return response;
             }
             catch (ArgumentException ae)
             {
@@ -91,16 +96,21 @@ namespace InventoryFunction.Functions
                 string search = req.Query["search"];
                 // TODO: Validate search string
 
+                var response = req.CreateResponse(HttpStatusCode.BadRequest);
+                response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+                response.WriteString($"{search}");
+                return response;
+
                 // Process
                 List<Brand> brands = await _workflow.GetBrands(search);
 
                 // Respond
                 _logger.LogInformation("GetBrands success response.");
 
-                var response = req.CreateResponse(HttpStatusCode.OK);
-                response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString(JsonConvert.SerializeObject(brands));
-                return response;
+                //var response = req.CreateResponse(HttpStatusCode.OK);
+                //response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
+                //response.WriteString(JsonConvert.SerializeObject(brands));
+                //return response;
             }
             catch (ArgumentException ae)
             {
