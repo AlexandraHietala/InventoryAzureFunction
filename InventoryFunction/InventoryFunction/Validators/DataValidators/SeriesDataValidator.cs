@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using System.Linq;
 
 namespace InventoryFunction.Validators.DataValidators
 {
@@ -18,13 +19,25 @@ namespace InventoryFunction.Validators.DataValidators
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _connString;
+        private readonly string _dataSource;
+        private readonly string _userId;
+        private readonly string _userPass;
+        private readonly string _initialCatalog;
+        private readonly SqlConnectionStringBuilder builder;
 
         public SeriesDataValidator(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<SeriesDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory");
+            _dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+            _userId = _configuration.GetConnectionString("SEInventoryUserId");
+            _userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+            _initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+            builder = new SqlConnectionStringBuilder();
+            builder.DataSource = _dataSource;
+            builder.UserID = _userId;
+            builder.Password = _userPass;
+            builder.InitialCatalog = _initialCatalog;
         }
 
         public async Task<bool> VerifySeries(int id)
@@ -33,9 +46,21 @@ namespace InventoryFunction.Validators.DataValidators
             {
                 _logger.LogDebug("VerifySeries request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //SeriesDto series = await connection.QueryFirstAsync<SeriesDto>("[dbo].[spGetASeries]", new { id }, commandType: CommandType.StoredProcedure);
-                SeriesDto series = new SeriesDto();
+                SeriesDto series = null;
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    series = connection.Query<SeriesDto>("dbo.spGetASeries", new
+                    {
+                        id = id
+                    },
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("VerifySeries success response.");
                 if (series != null) return true;

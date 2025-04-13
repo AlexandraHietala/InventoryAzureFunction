@@ -6,6 +6,7 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using System.Linq;
 
 namespace InventoryFunction.Validators.DataValidators
 {
@@ -18,14 +19,25 @@ namespace InventoryFunction.Validators.DataValidators
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _connString;
+        private readonly string _dataSource;
+        private readonly string _userId;
+        private readonly string _userPass;
+        private readonly string _initialCatalog;
+        private readonly SqlConnectionStringBuilder builder;
 
         public ItemCommentDataValidator(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<ItemCommentDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory");
-        }
+            _dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+            _userId = _configuration.GetConnectionString("SEInventoryUserId");
+            _userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+            _initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+            builder = new SqlConnectionStringBuilder();
+            builder.DataSource = _dataSource;
+            builder.UserID = _userId;
+            builder.Password = _userPass;
+            builder.InitialCatalog = _initialCatalog;
 
         public async Task<bool> VerifyItemComment(int id)
         {
@@ -33,9 +45,21 @@ namespace InventoryFunction.Validators.DataValidators
             {
                 _logger.LogDebug("VerifyItemComment request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //ItemCommentDto comment = await connection.QueryFirstAsync<ItemCommentDto>("[dbo].[spGetItemComment]", new { id = id }, commandType: CommandType.StoredProcedure);
-                ItemCommentDto comment = new ItemCommentDto();
+                ItemCommentDto comment = null;
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    comment = connection.Query<ItemCommentDto>("dbo.spGetItemComment", new
+                    {
+                        id = id
+                    },
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("VerifyItemComment success response.");
                 if (comment != null) return true;

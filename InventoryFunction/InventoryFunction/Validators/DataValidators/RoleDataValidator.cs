@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
 using InventoryFunction.Models.Classes;
+using System.Linq;
 
 namespace InventoryFunction.Validators.DataValidators
 {
@@ -19,13 +20,25 @@ namespace InventoryFunction.Validators.DataValidators
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _connString;
+        private readonly string _dataSource;
+        private readonly string _userId;
+        private readonly string _userPass;
+        private readonly string _initialCatalog;
+        private readonly SqlConnectionStringBuilder builder;
 
         public RoleDataValidator(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<RoleDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory")!;
+            _dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+            _userId = _configuration.GetConnectionString("SEInventoryUserId");
+            _userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+            _initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+            builder = new SqlConnectionStringBuilder();
+            builder.DataSource = _dataSource;
+            builder.UserID = _userId;
+            builder.Password = _userPass;
+            builder.InitialCatalog = _initialCatalog;
         }
 
         public async Task<bool> VerifyRole(int id)
@@ -34,9 +47,21 @@ namespace InventoryFunction.Validators.DataValidators
             {
                 _logger.LogDebug("VerifyRole request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //RoleDto role = await connection.QueryFirstAsync<RoleDto>("[dbo].[spGetRole]", new { id }, commandType: CommandType.StoredProcedure);
                 RoleDto role = null;
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    role = connection.Query<RoleDto>("dbo.spGetRole", new
+                    {
+                        id = id
+                    },
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("VerifyRole success response.");
                 if (role != null) return true;

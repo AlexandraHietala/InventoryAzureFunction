@@ -6,6 +6,8 @@ using System.Data;
 using System.Threading.Tasks;
 using InventoryFunction.Models.DTOs;
 using System;
+using InventoryFunction.Data;
+using System.Linq;
 
 namespace InventoryFunction.Validators.DataValidators
 {
@@ -18,13 +20,25 @@ namespace InventoryFunction.Validators.DataValidators
     {
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
-        private readonly string _connString;
+        private readonly string _dataSource;
+        private readonly string _userId;
+        private readonly string _userPass;
+        private readonly string _initialCatalog;
+        private readonly SqlConnectionStringBuilder builder;
 
         public BrandDataValidator(ILoggerFactory loggerFactory, IConfiguration configuration)
         {
             _logger = loggerFactory.CreateLogger<BrandDataValidator>();
             _configuration = configuration;
-            //_connString = _configuration.GetConnectionString("SEInventory");
+            _dataSource = _configuration.GetConnectionString("SEInventoryDataSource");
+            _userId = _configuration.GetConnectionString("SEInventoryUserId");
+            _userPass = _configuration.GetConnectionString("SEInventoryUserPass");
+            _initialCatalog = _configuration.GetConnectionString("SEInventoryInitialCatalog");
+            builder = new SqlConnectionStringBuilder();
+            builder.DataSource = _dataSource;
+            builder.UserID = _userId;
+            builder.Password = _userPass;
+            builder.InitialCatalog = _initialCatalog;
         }
 
         public async Task<bool> VerifyBrand(int id)
@@ -33,9 +47,21 @@ namespace InventoryFunction.Validators.DataValidators
             {
                 _logger.LogDebug("VerifyBrand request received.");
 
-                //using IDbConnection connection = new SqlConnection(_connString);
-                //BrandDto brand = await connection.QueryFirstAsync<BrandDto>("[dbo].[spGetBrand]", new { id }, commandType: CommandType.StoredProcedure);
-                BrandDto brand = new BrandDto();
+                BrandDto brand = null;
+
+                using (SqlConnection connection = new SqlConnection(builder.ConnectionString))
+                {
+                    if (connection.State == ConnectionState.Closed)
+                    {
+                        connection.Open();
+                    }
+
+                    brand = connection.Query<BrandDto>("dbo.spGetBrand", new
+                    {
+                        id = id
+                    },
+                        commandType: CommandType.StoredProcedure).FirstOrDefault();
+                }
 
                 _logger.LogInformation("VerifyBrand success response.");
                 if (brand != null) return true;
