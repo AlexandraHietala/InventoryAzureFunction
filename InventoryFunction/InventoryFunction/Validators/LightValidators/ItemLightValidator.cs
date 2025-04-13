@@ -12,6 +12,7 @@ namespace InventoryFunction.Validators.LightValidators
         string ValidateCollectionId(int id);
         string ValidateAddItem(Item item);
         string ValidateUpdateItem(Item item);
+        string ValidateSearchString(string search);
     }
 
     public class ItemLightValidator : IItemLightValidator
@@ -200,6 +201,33 @@ namespace InventoryFunction.Validators.LightValidators
             string failures = string.Empty;
             foreach (var failure in failureList) failures = failures + "[" + failure.Code.ToString() + "] " + failure.Message + " ";
             return failures;
+        }
+
+        public string ValidateSearchString(string search)
+        {
+            List<ValidationFailure> failureList = new List<ValidationFailure>();
+
+            if (search != null && search.Length > 50)
+                failureList.Add(new ValidationFailure() { Code = 100200039, Message = "Search string is too long." });
+
+            if (search != null && !IsAlphanumeric(search))
+                failureList.Add(new ValidationFailure() { Code = 100200040, Message = "Search string contains invalid characters." });
+
+            string failures = string.Empty;
+            foreach (var failure in failureList) failures = failures + "[" + failure.Code.ToString() + "] " + failure.Message + " ";
+            return failures;
+        }
+
+        public bool IsAlphanumeric(string input)
+        {
+            foreach (char c in input)
+            {
+                if (!char.IsLetterOrDigit(c))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

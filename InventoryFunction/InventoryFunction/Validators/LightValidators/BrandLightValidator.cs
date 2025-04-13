@@ -11,6 +11,7 @@ namespace InventoryFunction.Validators.LightValidators
         string ValidateBrandId(int id);
         string ValidateAddBrand(Brand brand);
         string ValidateUpdateBrand(Brand brand);
+        string ValidateSearchString(string search);
     }
 
     public class BrandLightValidator : IBrandLightValidator
@@ -85,6 +86,33 @@ namespace InventoryFunction.Validators.LightValidators
             string failures = string.Empty;
             foreach (var failure in failureList) failures = failures + "[" + failure.Code.ToString() + "] " + failure.Message + " ";
             return failures;
+        }
+
+        public string ValidateSearchString(string search)
+        {
+            List<ValidationFailure> failureList = new List<ValidationFailure>();
+
+            if (search != null && search.Length > 50)
+                failureList.Add(new ValidationFailure() { Code = 100200033, Message = "Search string is too long." });
+
+            if (search != null && !IsAlphanumeric(search))
+                failureList.Add(new ValidationFailure() { Code = 100200034, Message = "Search string contains invalid characters." });
+
+            string failures = string.Empty;
+            foreach (var failure in failureList) failures = failures + "[" + failure.Code.ToString() + "] " + failure.Message + " ";
+            return failures;
+        }
+
+        public bool IsAlphanumeric(string input)
+        {
+            foreach (char c in input)
+            {
+                if (!char.IsLetterOrDigit(c))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

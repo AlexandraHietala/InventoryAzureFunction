@@ -146,6 +146,6 @@ namespace InventoryFunction.Validators.LightValidators
             string failures = string.Empty;
             foreach (var failure in failureList) failures = failures + "[" + failure.Code.ToString() + "] " + failure.Message + " ";
             return failures;
-        }
+        } 
     }
 }

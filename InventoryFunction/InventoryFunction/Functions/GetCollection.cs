@@ -82,7 +82,8 @@ namespace InventoryFunction.Functions
             try
             {
                 // Validate
-                // TODO: Validate search string
+                var failures = _lightValidator.ValidateSearchString(search);
+                if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
                 // Process
                 List<Collection> collections = await _workflow.GetCollections(search);
