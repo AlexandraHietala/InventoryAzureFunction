@@ -43,7 +43,7 @@ namespace InventoryFunction.Functions
                 string param = req.Query["id"]?.ToString(); // TODO: Why you no work>!?
                 int id = Convert.ToInt32(param);
 
-                var response = req.CreateResponse(HttpStatusCode.BadRequest);
+                var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
                 response.WriteString($"{param}");
                 return response;
@@ -96,7 +96,7 @@ namespace InventoryFunction.Functions
                 string search = req.Query["search"];
                 // TODO: Validate search string
 
-                var response = req.CreateResponse(HttpStatusCode.BadRequest);
+                var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
                 response.WriteString($"{search}");
                 return response;
