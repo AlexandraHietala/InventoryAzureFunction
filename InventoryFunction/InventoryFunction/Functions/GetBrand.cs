@@ -33,7 +33,7 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetBrand")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrand/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrand/{id}")] HttpRequestData req, int id)
         {
             _logger.LogDebug("GetBrand request received.");
 
@@ -41,11 +41,11 @@ namespace InventoryFunction.Functions
             {
                 // Validate
                 string param = req.Query["id"]?.ToString(); // TODO: Why you no work>!?
-                int id = Convert.ToInt32(param);
+                int id2 = Convert.ToInt32(param);
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString($"{param}");
+                response.WriteString($"{id} - {id2}");
                 return response;
 
                 var failures = _lightValidator.ValidateBrandId(id);
@@ -86,19 +86,19 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetBrands")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrands/{search?}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetBrands/{search?}")] HttpRequestData req, string search)
         {
             _logger.LogDebug("GetBrands request received.");
  
             try
             {
                 // Validate
-                string search = req.Query["search"];
+                string search2 = req.Query["search"];
                 // TODO: Validate search string
 
                 var response = req.CreateResponse(HttpStatusCode.OK);
                 response.Headers.Add("Content-Type", "text/plain; charset=utf-8");
-                response.WriteString($"{search}");
+                response.WriteString($"{search} - {search2}");
                 return response;
 
                 // Process
