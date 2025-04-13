@@ -30,15 +30,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetASeries")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetASeries/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetASeries/{id}")] HttpRequestData req, int id)
         {
             _logger.LogDebug("GetASeries request received.");
 
             try
             {
                 // Validate
-                int id = Convert.ToInt32(req.Query["id"]);
-
                 var failures = _lightValidator.ValidateSeriesId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
@@ -77,14 +75,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetSeries")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetSeries/{search?}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetSeries/{search?}")] HttpRequestData req, string search)
         {
             _logger.LogDebug("GetSeries request received.");
 
             try
             {
                 // Validate
-                string search = req.Query["search"];
                 // TODO: Validate search string
 
                 // Process

@@ -32,15 +32,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItemComment")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemComment/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemComment/{commentId}")] HttpRequestData req, int commentId)
         {
             _logger.LogDebug("GetItemComment request received.");
             
             try
             {
                 // Validate
-                int commentId = Convert.ToInt32(req.Query["id"]);
-
                 var failures = _commentLightValidator.ValidateItemCommentId(commentId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
@@ -80,15 +78,13 @@ namespace InventoryFunction.Functions
 
 
         [Function("GetItemCommentsByItem")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemCommentsByItem/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemCommentsByItem/{itemId}")] HttpRequestData req, int itemId)
         {
             _logger.LogDebug("GetItemCommentsByItem request received.");
       
             try
             {
                 // Validate
-                int itemId = Convert.ToInt32(req.Query["id"]);
-
                 var failures = _itemLightValidator.ValidateItemId(itemId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 

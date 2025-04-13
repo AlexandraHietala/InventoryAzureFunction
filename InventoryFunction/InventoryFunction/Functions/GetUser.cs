@@ -30,15 +30,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetUser")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetUser/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetUser/{id}")] HttpRequestData req, int id)
         {
             _logger.LogDebug("GetUser request received.");
 
             try
             {
                 // Validate
-                int id = Convert.ToInt32(req.Query["id"]);
-
                 var failures = _lightValidator.ValidateUserId(id);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 

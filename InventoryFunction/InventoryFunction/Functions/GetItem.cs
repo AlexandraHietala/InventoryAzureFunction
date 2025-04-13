@@ -30,15 +30,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItem")]
-        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItem/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run1([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItem/{itemId}")] HttpRequestData req, int itemId)
         {
             _logger.LogDebug("GetItem request received.");
 
             try
             {
                 // Validate
-                int itemId = Convert.ToInt32(req.Query["id"]);
-
                 var failures = _lightValidator.ValidateItemId(itemId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
@@ -77,14 +75,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItems")]
-        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItems/{search?}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run2([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItems/{search?}")] HttpRequestData req, string search)
         {
             _logger.LogDebug("GetItems request received.");
 
             try
             {
                 // Validate
-                string search = req.Query["search"];
                 // TODO: Validate search string
 
                 // Process
@@ -122,15 +119,13 @@ namespace InventoryFunction.Functions
         }
 
         [Function("GetItemsPerCollection")]
-        public async Task<HttpResponseData> Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemsPerCollection/{id}")] HttpRequestData req)
+        public async Task<HttpResponseData> Run3([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "GetItemsPerCollection/{collectionId}")] HttpRequestData req, int collectionId)
         {
             _logger.LogDebug("GetItemsPerCollection request received.");
  
             try
             {
                 // Validate
-                int collectionId = Convert.ToInt32(req.Query["id"]);
-
                 var failures = _lightValidator.ValidateCollectionId(collectionId);
                 if (!string.IsNullOrEmpty(failures)) throw new ArgumentException(failures);
 
