@@ -38,6 +38,7 @@ namespace InventoryFunction.Validators.DataValidators
             builder.UserID = _userId;
             builder.Password = _userPass;
             builder.InitialCatalog = _initialCatalog;
+        }
 
         public async Task<bool> VerifyItemComment(int id)
         {
