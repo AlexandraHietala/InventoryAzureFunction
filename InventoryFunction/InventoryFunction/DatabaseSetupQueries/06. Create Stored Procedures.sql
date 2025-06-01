@@ -1329,15 +1329,12 @@ GO
 -----------------------------------------------------------
 
 CREATE OR ALTER PROCEDURE [dbo].[spGetItemsPerCollection]
-	@collection_id int,
-	@search varchar(250)
-	
+	@collection_id int
 AS
 
 BEGIN TRY
 
-	IF (@search IS NOT NULL AND LEN(LTRIM(RTRIM(@search))) > 0) SELECT * FROM [dbo].[vwItems_Search] WHERE COLLECTION_ID = @collection_id AND FULLDATA LIKE '%' + LTRIM(RTRIM(@search)) + '%'
-	ELSE SELECT * FROM [dbo].[vwItems] WHERE COLLECTION_ID = @collection_id
+	SELECT * FROM [dbo].[vwItems] WHERE COLLECTION_ID = @collection_id
 
 END TRY
 

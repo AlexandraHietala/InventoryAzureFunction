@@ -89,6 +89,7 @@ namespace InventoryFunction.Data
                 throw;
             }
         }
+
         public async Task<List<ItemDto>> GetItems(string search)
         {
             try
